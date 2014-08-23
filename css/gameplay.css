@@ -5,7 +5,6 @@
     -ms-user-select: none;      /* IE 10+ */
 
     /* No support for these yet, use at own risk */
-    -o-user-select: none;
     user-select: none;
 }
 
@@ -22,6 +21,7 @@
     border-bottom: 1px solid white;
 */
     background-color: #333;
+    background-color: transparent;
 /*    width: 100%;*/
     margin: 0px 10px;
     display: block;
@@ -35,11 +35,19 @@
     height: 60px;
     background-color: transparent;
     border-radius: 7px;
+    -webkit-transition: all 0s, -webkit-box-shadow 0.3s, background-color 0.3s, background-image 0.5s, background-position 0s, opacity 0.5s, border 0.5s;
     transition: all 0s, box-shadow 0.3s, background-color 0.3s, background-image 0.5s, background-position 0s, opacity 0.5s, border 0.5s;
     color: transparent;
+    -webkit-background-size: auto 100%;
     background-size: auto 100%;
 /*    color: transparent !important;*/
 /*    box-shadow: inset 0px 0px 3px rgba(0,0,0,0.5);*/
+/*    outline: 1px solid rgba(0,255,255,0.2);*/
+}
+
+.board td:hover{
+    background-color: rgba(255,255,255,0.05);
+    transition: 0s;
 }
 
 .board td[data-piece="*"]{
@@ -62,6 +70,7 @@
     width: 100%;
 /*    outline: 1px solid cyan;*/
     position: relative;
+    -webkit-transition: 0.5s;
     transition: 0.5s;
     -webkit-transform: rotate(0deg);
 }
@@ -103,6 +112,7 @@
 .board td.active{
 /*    background-color: #0AF;*/
 /*    box-shadow: inset 0px 0px 25px #0FF;*/
+    -webkit-box-shadow: inset 0px 0px 0px 1px #0DD;
     box-shadow: inset 0px 0px 0px 1px #0DD;
     background-color: rgba(0,255,255,0.2);
     cursor: pointer !important;
@@ -124,6 +134,7 @@
 
 .owned{
     background-image: url(../images/pieces/0.png), url(../images/tiles/0.png);
+    -webkit-background-origin: border-box;
     background-origin: border-box;
     color: transparent !important;
 /*    -webkit-transition: background-image 0.5s; */
@@ -159,11 +170,13 @@
 
     border-radius: 7px;
     top: 0px;
+    -webkit-box-shadow: 20px 20px 5px rgba(0,0,0,0.2);
     box-shadow: 20px 20px 5px rgba(0,0,0,0.2);
     padding: 0px;
     position: absolute;
     padding: 20px;
     z-index: 1;
+    visibility: hidden;
 /*    left: 50%;*/
 }
 
@@ -193,7 +206,9 @@
     background-color: #555;
     margin: 2px 0px;
     margin-bottom: 4px;
+    -webkit-box-shadow: 0px 4px 0px #444;
     box-shadow: 0px 4px 0px #444;
+    -webkit-transition: 0.2s;
     transition: 0.2s;
     border: 1px solid transparent;
 }
@@ -205,12 +220,14 @@
 .piece-box-container .controls .switch:active{
     margin-top: 6px;
     margin-bottom: 0px;
+    -webkit-box-shadow: 0px 0px 0px #444;
     box-shadow: 0px 0px 0px #444;
 }
 
 .piece-box-container .controls .switch.active{
     margin-top: 6px;
     margin-bottom: 0px;
+    -webkit-box-shadow: 0px 0px 0px #444;
     box-shadow: 0px 0px 0px #444;
     border: 1px solid #0FA;
 }
@@ -218,6 +235,7 @@
 .piece-box-container .controls .switch.disabled{
     margin-top: 6px;
     margin-bottom: 0px;
+    -webkit-box-shadow: 0px 0px 0px #444;
     box-shadow: 0px 0px 0px #444;
     opacity: 0.5;
     cursor: not-allowed;
@@ -244,12 +262,15 @@
 /*    height: 60px;*/
 /*    padding: 27px 0px;*/
     line-height: 0px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
     box-sizing: border-box;
     border: 3px solid transparent;
     border-radius: 5px;
 /*    color: #333;*/
 /*    box-shadow: inset 0px 0px 4px black;*/
     opacity: 0.2;
+    -webkit-background-size: auto 100%;
     background-size: auto 100%;
 }
 
@@ -317,12 +338,15 @@
 }
 
 .dragged{
+    -webkit-box-shadow: 15px 15px 3px rgba(0,0,0,0.3);
     box-shadow: 15px 15px 3px rgba(0,0,0,0.3);
     cursor: -webkit-grabbing;
+    -webkit-transition: -webkit-box-shadow 0.3s;
     transition: box-shadow 0.3s;
 }
 
 .droppable-active{
+    -webkit-box-shadow: inset 0px 0px 15px rgba(0,255,255,0.5);
     box-shadow: inset 0px 0px 15px rgba(0,255,255,0.5);
 }
 
@@ -396,9 +420,11 @@
 .game-area .column-handler>.player-stats .own:before{
     content: ' ';
     position: absolute;
-    height: 1px;
+    height: 2px;
     width: 90%;
-    background-color: #333;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(0,0,0,0.2);
+/*    background-color: rgba();*/
     top: -3px;
     margin-left: 5%;
 }
@@ -418,11 +444,13 @@
     margin: -1px 0px;
     border-radius: 2px;
     background-image: url(../images/tiles/0.png);
+    -webkit-background-size: cover;
     background-size: cover;
 }
 
 .game-area .column-handler>.player-stats .own .lost-pieces>li{
     background-image: url(../images/pieces/0.png), url(../images/tiles/0.png);
+    -webkit-background-size: 500px 30px, 100% 100%;
     background-size: 500px 30px, 100% 100%;
 /*    background-position: 0px 0px;*/
 }
@@ -440,8 +468,21 @@
     border-radius: 10px 0px 0px 10px;
 /*    border: 1px solid #AAA;*/
     background-color: #333;
+    background-color: rgba(0,0,0,0.1);
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,0.5);
     border-right: 0px;
     padding: 20px;
+/*    outline: 1px solid red;*/
+}
+.game-area .column-handler>.player-stats .profile #resign{
+    padding: 3px 5px;
+    background-color: #222;
+    border-radius: 5px;
+    margin-right: 5px;
+    color: white;
+    text-decoration: none !important;
+    cursor: pointer;
+    
 }
 
 .game-area .column-handler>.player-stats .profile>*{
@@ -473,6 +514,7 @@
     border-radius: 2px;
     position: relative;
     padding: 2px 5px;
+    -webkit-transition: 0.3s;
     transition: 0.3s;
     overflow: hidden;
 }
@@ -512,26 +554,46 @@
 ====Events====
 =============*/
 
+.game-area .player-stats .profile{
+    transition: 0.5s;
+}
 .game-area .player-stats .ready .profile{
     background-color: rgba(255,255,100,0.5);
 }
 
-.game-area.state-waiting .board-container{
-    background-color: gray;
+.game-area .board-container{
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    border-right: 1px solid rgba(255,255,255,0.05);
+    border-top: 1px solid rgba(0,0,0,0.2);
+    background-color: rgba(0,0,0,0.1);
+    box-shadow: inset 0px 0px 20px rgba(0,0,0,0.5);
+    border-radius: 10px;
+    transition: 0.5s background-color, 0.5s box-shadow;
 }
 
 
+.game-area.state-waiting .board-container{
+    background-color: rgba(255,0,0,0.03);
+    box-shadow: inset 0px 0px 20px rgba(255,0,0,0.5);
+    border-top-left-radius: 0px;
+}
+
 .game-area.state-waiting .player-stats .opponent .profile{
-    background-color: gray;
+/*    background-color: blue;*/
+    background-color: rgba(255,0,0,0.03);
+    box-shadow: inset 0px 0px 20px rgba(255,0,0,0.5);
 }
 
 .game-area.state-turn .board-container{
-    background-color: green;
+    background-color: rgba(0,255,0,0.03);
+    box-shadow: inset 0px 0px 20px rgba(0,255,0,0.5);
+    border-bottom-left-radius: 0px;
 }
 
 
 .game-area.state-turn .player-stats .own .profile{
-    background-color: green;
+    background-color: rgba(0,255,0,0.03);
+    box-shadow: inset 0px 0px 20px rgba(0,255,0,0.5);
 }
 
 
@@ -557,11 +619,13 @@
     background-blend-mode: normal, screen;
 }
 
-.game-area:not(.setup) .piece-box-container{
-    visibility: hidden;
+
+.game-area.setup .piece-box-container{
+    visibility: visible;
 }
 
 .game-area.setup .board tr:nth-last-child(-n+3) td{
+    -webkit-box-shadow: inset 0px 0px 0px 1px #0DD;
     box-shadow: inset 0px 0px 0px 1px #0DD;
     background-color: rgba(0,255,255,0.2);
 }

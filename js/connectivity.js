@@ -128,7 +128,7 @@ function GameEventHandler(data)
                     break;
             }
             
-            
+            GameStateChanged(data);
             
         }
         

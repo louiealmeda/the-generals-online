@@ -1,4 +1,9 @@
-
+var Notification = {
+    Show: ShowNotification,
+    Html: "",
+    Object: null,
+    Close: CloseNotification
+}
 
 
 var currentSiteState = -1;
@@ -16,6 +21,7 @@ $currentScreen = ".container.main";
 
 $(document).ready(function(){
     
+    Notification.Html = $(".notification-window").wrap("<div>").parent().html();
 //    MoveScreen(-200);
     
 //    alert($(".lobby .main>.header").height() );
@@ -92,7 +98,7 @@ $(document).ready(function(){
         playerPopover.hovered = false;
         playerPopover.moveToTarget(null);
     });
-    
+        
     
 //    var timeoutObj;
 //    $('.online-player').popover({
@@ -535,3 +541,61 @@ function ToggleSwitch(sender)
     
 }
 
+function ShowNotification(title, body, addedClass)
+{
+    $(".notification-window").replaceWith(Notification.Html);
+    Notification.Object = $(".notification-window");
+    Notification.Object.children(".title").html(title);
+    Notification.Object.children(".body").html(body);
+    Notification.Object.addClass(addedClass);
+    Notification.Object.css("width","200px");
+    
+    var height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
+    var width = Notification.Object.width();
+    
+    if(height>width)
+    {
+        var dif = (height - width) * 3;
+        
+        Notification.Object.css("width", "+=" +dif+ "px");
+        height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
+        width = Notification.Object.width();
+        
+    }
+    
+    Notification.Object.css({
+        "transition":"0.2s height 0s, 0.2s width 0.2s",
+        "width":"0px",
+        "height":"0px",
+        "visibility":"hidden"
+    });
+    
+    setTimeout(function(){
+        Notification.Object.css({
+            "width": width+"px",
+            "height":height + "px",
+            "visibility":"visible"
+        });
+        
+        Notification.Object.children().css("opacity","1");
+        
+    },500);
+}
+
+function CloseNotification()
+{
+    Notification.Object.children().css({
+        "opacity":"0",
+        "transition":"0.5s all 0s"
+    });
+    
+    setTimeout(function(){
+        Notification.Object.css({
+            "transition":"0.2s height 0.2s, 0.2s width 0s, 0s visibility 0.4s",
+            "width":"0px",
+            "height":"0px",
+            "visibility":"hidden"
+        });
+        
+    },500);
+}

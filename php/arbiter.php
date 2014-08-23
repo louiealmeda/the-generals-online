@@ -9,33 +9,6 @@ require_once("constants.php");
 //                Test box                 //
 //                                         //
 /////////////////////////////////////////////
-//session_start();
-//$_SESSION["side"] = PlayerSide::SECOND_PLAYER;
-
-//function SetTmpID()
-//{
-//    session_start();
-////    $_SESSION["userID"] = $_POST["ID"];
-////    
-////    
-////    
-////    $id = $_POST["ID"];
-//    
-//    $matchID = QuerySingleRow("Select CurrentMatchID FROM User WHERE UserID = ".$_POST['ID'])["CurrentMatchID"];
-//    $query = "SELECT FirstPlayerID, SecondPlayerID FROM `Match` WHERE MatchID = $matchID";
-//    $players = array_values(QuerySingleRow($query));
-//    
-//    if($players[0] == $id)
-//        $_SESSION["side"] = PlayerSide::FIRST_PLAYER;
-//    else
-//        $_SESSION["side"] = PlayerSide::SECOND_PLAYER;
-//    
-//    $_SESSION["matchID"] = $matchID;
-//    $_SESSION["gameState"] = GameState::SETUP;
-//    
-//    echo "You are the {$_SESSION["side"]} player";
-//}
-
 
 
 //////////////////////////
@@ -101,6 +74,7 @@ function BackToLobby()
     unset($_SESSION["matchID"]);
     unset($_SESSION["side"]);
     unset($_SESSION["opponentID"]);
+    unset($_SESSION["setupTime"]);
 }
 
 function GetBoard()

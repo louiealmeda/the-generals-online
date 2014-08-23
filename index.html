@@ -119,12 +119,12 @@
                 </div>
             </div>
         </div>
-        <div class="container gameplay"
+        <div class="container gameplay state-waiting"
              >
-<!--                style="top: -200%; background-color: black; z-index: 999;"-->
              
+<!--                style="top: -200%; background-color: black; z-index: 999;"-->
             
-            <div class="game-area setup state-waiting">
+            <div class="game-area">
                 <div class = "row">
                     <div class="col-md-12 opponents-turn">Opponents Turn</div>
                     <div class="col-md-12 column-handler-container">
@@ -150,6 +150,7 @@
                                     </ul>
                                     <div class="profile">
                                         <span class="points">30</span>
+                                        <a id="resign" onclick="Resign()">Resign</a>
                                         <br>
                                         <div class="time"><span>4:23</span><div></div></div>
                                         <div class="img"></div>
@@ -239,6 +240,16 @@
         </div>
 
         <div id = "test-panel"></div>
+        
+        
+        <div class="notification-window absolute-center">
+            <div class="title">in ingeniis admodum minim</div>
+            <div class="body">firmissimum praetermissum o labore malis nulla legam aliquip fidelissimae 
+                illustriora quem amet adipisicing transferrem mandaremus
+                <div class="btn gray">View Replay</div>
+                <div class="btn blue">Back to Lobby</div>
+            </div>
+        </div>
         
     </body>
     

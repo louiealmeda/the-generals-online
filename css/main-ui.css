@@ -17,8 +17,9 @@
 .delay-1-5{animation-delay: 1.5s;}
 .delay-2{animation-delay: 2s;}
 .delay-2-5{animation-delay: 2.5s;}
-/*==========*/
 
+
+/*==========*/
 
 #test-panel.active{
     color: red;
@@ -282,6 +283,9 @@ input:focus{
 
 .container.gameplay{
 /*    top: 200%;*/
+    background-image: url(../images/bg-copy.png);
+    background-size: cover;
+    background-position: center;
 }
 
 /*================Lobby================*/
@@ -563,8 +567,6 @@ input:focus{
 /*    background-color: red !important;*/
 }
 
-
-
 .inset{
     background-color: rgba(0,0,0,0.2);
     box-shadow: inset 0px 0px 16px black;
@@ -785,6 +787,74 @@ input:focus{
 .player-popover ul li{
     display: inline-block;
 }
+
+
+.notification-window{
+    width: 300px;
+    height: 200px;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 
+        0px 0px 0px 2px gray,
+        0px 0px 0px 5px black,
+        40px 40px 5px rgba(0,0,0,0.5);
+    color: white;
+/*    transition:0.2s height 0s, 0.2s width 0.2s;*/
+    visibility: hidden;
+}
+
+.notification-window.red{
+    box-shadow: 
+        0px 0px 0px 2px red,
+        0px 0px 0px 5px black,
+        40px 40px 5px rgba(0,0,0,0.5);
+}
+
+.notification-window.blue{
+    box-shadow: 
+        0px 0px 0px 2px #0AF,
+        0px 0px 0px 5px black,
+        40px 40px 5px rgba(0,0,0,0.5);
+}
+
+.notification-window.green{
+    box-shadow: 
+        0px 0px 0px 2px green,
+        0px 0px 0px 5px black,
+        40px 40px 5px rgba(0,0,0,0.5);
+}
+
+
+.notification-window>*{
+    opacity: 0;
+    transition: 0.5s 0.5s;
+}
+
+.notification-window .title{
+    padding: 30px;    
+    padding-bottom: 5px;
+    font-size: 1.3em;
+    line-height: 1em;
+}
+
+.notification-window .body{
+    padding: 30px;
+    padding-top: 5px;
+}
+
+
+.btn.red{ background-color: rgb(150,0,0); color: white; }
+.btn.red:hover{ background-color: rgb(200,0,0); }
+
+.btn.green{ background-color: rgb(0,150,0); color: white;}
+.btn.green:hover{ background-color: rgb(0,200,0); }
+
+.btn.blue{ background-color: rgb(0,160,255); color: black;}
+.btn.blue:hover{ background-color: rgb(0,190,255); }
+
+.btn.gray{ background-color: rgb(150,150,150); color: black;}
+.btn.gray:hover{ background-color: rgb(200,200,200); }
 
 
 [class*="emoticon-"]{

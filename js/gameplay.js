@@ -234,7 +234,7 @@ function SubmitPosition(sender)
     
     UpdateBoardContent();
     $.post("php/arbiter.php", {"method":"SubmitSetupPosition", "board": board.content}, function(data){
-//        alert(data);
+
         data = JSON.parse(data);
         
         if(data.error == Errors.INVALID_SETUP)
@@ -249,7 +249,6 @@ function SubmitPosition(sender)
         {   
             $(".game-area").removeClass().addClass("game-area").addClass("state-waiting-to-start");
             $(".board td.ui-droppable").droppable("disable");
-//            alert("Waiting for oponent");
         }
     });
 }
@@ -273,9 +272,6 @@ function UpdateBoardContent()
     });
     
     board.content = board.content.join("");;
-//    alert(board.content);
-//    alert(board.content);
-//    alert(JSON.stringify(tmpBoard));
 }
 
 function EmptyPieceBox()
@@ -313,12 +309,9 @@ function RefreshPieceBox()
         
     }
     
-//    if($(".game-area .piece-box>li.has-remaining").length < 2)
-//        alert($(".game-area .piece-box>li.has-remaining").length);
-    
     if($(".game-area .piece-box>li.has-remaining").length == 0)
     {
-//        alert($(".game-area .controls .ready").length);   
+
        $(".game-area .controls .ready").removeClass("disabled"); 
     }
     else
@@ -332,8 +325,6 @@ function GenerateBoard()
     
     //Resize Board
     
-    
-//    alert(board.content);
     tmpBoard = board.content;
     board.content = tmpBoard.split("/");
     var tmpBoardContent = "";
@@ -429,10 +420,8 @@ function GenerateBoard()
                 
                 $(".board td:not(.owned)").addClass("droppable");
                 $(".board td.owned").draggable("enable");
-//                alert();
             },10);
             
-//            alert($(".board td.owned").attr("class"));
             break;
     }
     
@@ -475,6 +464,18 @@ function ResizeBoard()
     
 }
 
+
+function GameStateChanged(data)
+{
+    switch(data.gameState)
+    {
+        case GameStates.GAME_OVER:
+            data.won = data.won == 0 ? "You lose!" : "You won!";
+            Notification.Show(data.won, "You captured your opponent's flag. You gained 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", "red");
+            break;
+    }
+}
+
 function UpdateFeedBack(data)
 {   
     
@@ -508,12 +509,7 @@ function UpdateFeedBack(data)
             alert("reveal flag");
             break;
             
-        case GameStates.GAME_OVER:
-            alert("Gameover: " + data.won);
-            data.won = data.won == 0 ? "You lose!" : "You won!";
-            alert(data.won);
-            BackToLobby();
-            break;
+        
     }
     
     
@@ -540,8 +536,6 @@ function UpdateFeedBack(data)
         $(".game-area .own .lost-pieces").html(pieces);
     }
     
-//    alert("Here");    
-    
     
     data.self.time = data.self.time == null ? "00:05:00" : data.self.time;
     data.opponent.time = data.opponent.time == null ? "00:05:00" : data.opponent.time;
@@ -551,31 +545,7 @@ function UpdateFeedBack(data)
     {
         UpdateTimeLine(5*60,data.self.time, "own");
         UpdateTimeLine(5*60,data.opponent.time, "opponent");
-        
-//        data.self.time = data.self.time.split(":")[1] + ":" + data.self.time.split(":")[2];
-//        data.opponent.time = data.opponent.time.split(":")[1] + ":" + data.opponent.time.split(":")[2];
-////        alert($(".game-area .player-stats .opponent .profile .time span").html());
-//        $(".game-area .player-stats .own .profile .time span").html(data.self.time);
-//        $(".game-area .player-stats .opponent .profile .time span").html(data.opponent.time);
-//        
-//        
-//        
-//        data.self.time = parseInt(data.self.time.split(":")[0]) * 60 + parseInt(data.self.time.split(":")[1]);
-//        data.opponent.time = parseInt(data.opponent.time.split(":")[0]) * 60 + parseInt(data.opponent.time.split(":")[1]);
-//        var maxTime = 5 * 60;
-////        alert(data.opponent.time / maxTime * 100 + "%");
-//        $(".game-area .player-stats .own .profile .time div").css({"width": data.self.time / maxTime * 100 + "%" });
-//        $(".game-area .player-stats .opponent .profile .time div").css({"width": data.opponent.time / maxTime * 100 + "%" });
-        
     }
-    
-    
-    
-//    alert(JSON.stringify(data.lostPieces.own));
-//    alert(JSON.stringify(data.lostPieces.enemy));
-//    alert();
-    
-    
     
     pieces = "";
     for(var i = 0; i < data.lostPieces.enemy; i++)
@@ -609,8 +579,6 @@ function ConvertToTile(o)
 
 function PlaceAndSwitch(tile)
 {   
-    //fix piecebox to board setup
-    //
     
     if($(".game-area .board td.selected").length != 0)
         $(".game-area").addClass("has-selected");
@@ -629,16 +597,6 @@ function PlaceAndSwitch(tile)
         parent: $(".game-area .selected").parents(".board").length != 0 ? "board" : "piece-box",
         tile: $(".game-area .selected")
     };
-    
-//    var isTileFromPieceBox = $(tile).parents(".piece-box").length != 0;
-//    var isSelectedFromPieceBox = $(".game-area .selected").parents(".piece-box").length != 0;
-//    var hasSelected = $(".game-area .selected").length != 0;
-
-    
-//    if(isTileFromPieceBox && isSelectedFromPieceBox ||
-//      !isSelectedFromPieceBox && isTileFromPieceBox && hasSelected)
-//        return;
-//    
     
     if( !SelectedTile.isExisting && CurrentTile.tile.hasClass("ui-draggable-disabled"))
         return;
@@ -659,11 +617,6 @@ function PlaceAndSwitch(tile)
             
         return; 
     }
-//    
-//    if(isSelectedFromPieceBox && !isTileFromPieceBox)
-//    {
-//        alert();
-//    }
     
     
     //if a piece is already selected
@@ -719,13 +672,9 @@ function PlaceAndSwitch(tile)
         return;
     }
     
-//    alert(CurrentTile.parent);
-    
     if($(tile).hasClass("owned") )
     {
-//        alert();
         //if the piece clicked is the selected piece, cancel selection
-//        alert($(".board td.droppable-active").length);
         if($(tile).hasClass("selected"))
         {
             $(".board td.droppable-active").removeClass("droppable-active");
@@ -733,8 +682,6 @@ function PlaceAndSwitch(tile)
         }
         else//if not, select
         {   
-//            alert($(".board td").length);
-//            alert($(".board .td:not(.ui-droppable-disabled)").length);
             $(".board td:not(.ui-droppable-disabled)").addClass("droppable-active");
             $(tile).addClass("selected");
         }
@@ -846,7 +793,7 @@ function GetValidMoves(tile)
         ResetSelectedPieces(); 
         return;
     }
-//    alert("1");
+
     var validTiles = [
         {x:tile.x    , y: tile.y - 1},
         {x:tile.x + 1, y: tile.y    },
@@ -857,18 +804,16 @@ function GetValidMoves(tile)
     
     ResetSelectedPieces();
     
-//    alert("2")
+
     $(".board td.owned[data-x='"+tile.x+"'][data-y='"+tile.y+"']").addClass("selected");
     
     validTiles.forEach(function(e,i){
-//        alert(e.x + "," + e.y);
         
 //        if($(".board td[data-x='"+e.x+"'][data-y='"+e.y+"']").attr("data-owned") != 1)
             $(".board td[data-x='"+e.x+"'][data-y='"+e.y+"']:not(.owned)").addClass("active").droppable("enable");
         
     });
     
-//    alert("3")
 }
 function ResetSetup(sender)
 {
@@ -918,7 +863,6 @@ function RandomizeSetup()
 
         if(i > 17 && lastLine + i < length)
         {
-//            alert(lastLine + i +", " + length);
             if(Math.round(Math.random() * 100 % 4) != 0)
             {
                 return;
