@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+        <link rel="stylesheet" type="text/css" href="css/animate.css">
+        <link rel="stylesheet" type="text/css" href="css/main-ui.css">
+        <link rel="stylesheet" type="text/css" href="css/gameplay.css">
+        <link rel="stylesheet" type="text/css" href="css/jquery-ui-1.10.4.custom.css">
+        
+        <link rel="shortcut icon" href="images/favicon.png">
+        
+        <script src="js/jquery-2.0.3.js"></script>
+        <script src="js/9patch.min.js"></script>
+        <script src="js/jquery-ui-1.10.4.custom.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/connectivity.js"></script>
+        <script src="js/gameplay.js"></script>
+        <script src="js/chat.js"></script>
+        <script src="js/menu.js"></script>
+        
+        <title>The Generals Online</title>
+        
+        <style></style>
+    </head>
+    <body>
+        
+        
+        
+        <div class="container main">
+            <div class="bg-container"></div>
+<!--
+            <div class="big-logo">
+                <div class = "logo-flare"></div>
+            </div>
+-->
+            
+            <ul class="menu null login-select unselectable">
+                <li  data-target = ".login-form" data-desc="Login with your own account.">Login</li>
+                <li  data-target = ".signup-form" data-desc="Join us! Unlock privillages and save your achievements. ">Signup</li>
+                <li onclick="LoginAsGuest();" class="" data-desc="Play rightaway without registering!">Login as Guest</li>
+<!--                <li onclick="MoveScreen('.container.main','.container.lobby');" data-desc="Start playing and speak with online players!">Lobby</li>-->
+            </ul>
+            
+            <ul class="menu null login-form unselectable">
+                <li class="label">Login to Your Account</li>
+                <li ><input id = "username" type = "text" placeholder="Username" maxlength="30"></li>
+                <li ><input id = "password" type = "password" placeholder="Password"></li>
+                <li onclick="Login();">Login</li>
+                <li data-target = ".login-select">Cancel</li>
+            </ul>
+            
+            <ul class="menu null signup-form unselectable">
+                <li class="label">Join Us!</li>
+                <li data-desc="Choose your username. Minimum of 4 characters, no spaces.">
+                    <input id = "username" type = "text" placeholder="Username" maxlength="30" onblur="CheckAvailability('Username',this);">
+                </li>
+                <li data-desc="Please enter your valid email address.">
+                    <input id = "email" type = "text" placeholder="Email Address" onblur="CheckAvailability('Email',this);">
+                </li>
+                <li data-desc="Minimum of 8 characters, we recommend you to use atleast one number, one uppercase and one symbol.">
+                    <input id = "password" type = "password" placeholder="Password">
+                </li>
+                <li><input id = "confirm-password" type = "password" placeholder="Confirm Password"></li>
+                <li onclick="SignUp();" >Signup</li>
+<!--                data-target = ".main-menu"-->
+                <li data-target = ".login-select">Cancel</li>
+            </ul>
+            
+            <ul class="menu null main-menu unselectable">
+                <li class="label" id = "welcome-message">Welcome General Lorem ipsum!</li>
+                <li onclick="GoToLobby();" data-desc="Start playing and speak with online players!">Lobby</li>
+                <li data-desc="See Announcements, Wall of Honor and so much more.">Headquarters</li>
+                <li onclick="Logout();" data-desc="Are you sure you don't want to play another match?" data-target=".login-select">Logout</li>
+            </ul>
+            
+            <span class="info blinking unselectable"></span>
+        </div>
+        
+        <div class="container lobby">
+            <div class = "frame-limit absolute-center">
+                <div class="bg-container"></div>
+<!--
+                <div>Fill</div>
+                <div onclick="Logout();">Logout</div>
+-->
+                <div class="row main">
+                    <div class="col-md-12 header">
+                        <div class="user-profile">
+                            <ul class="challenges"></ul>
+                        </div>
+                    </div>
+                    <div class=" col-md-4">
+<!--                        <div contenteditable="true" onkeyup="alert($(this).html())">distinguantur quamquam quis quis deserunt</div>-->
+                        <div class="inset online-player-container">
+                            <ul class = "online-player">
+                                
+                                
+<!--
+                                <li>anim philosophari eiusmod legam officia</li>
+                                <li>occaecat hic fore cernantur</li>
+                                <li>est varias possumus tempor</li>
+                                <li>cillum concursionibus eiusmod anim incididunt</li>
+-->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-8 inset chatbox-container">
+                        <div class = "scroller">
+                            <ul class="chatbox">
+                                <li><div class="img" style="background-image: url(images/users/default.png)"></div><strong data-username ="Invictus" class="player"><span class = "name">Invictus</span></strong>quid<span class="emoticon-3"></span> nisi eu quorum ipsum</li>
+                                <li class="system-normal">adipisicing nisi dolore nam coniunctione</li>
+                                <li class="system-warning">incididunt iudicem adipisicing varias sempiternum laboris ab</li>
+                                <li class="system-alert">mentitum nulla occaecat proident</li>
+                            </ul>
+                        </div>
+                        <div class="fader"></div>
+                        <input type="text" onkeyup="TieChatInputBox(this)" class="input-box" placeholder="Type your message here" maxlength="255">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container gameplay"
+             >
+<!--                style="top: -200%; background-color: black; z-index: 999;"-->
+             
+            
+            <div class="game-area setup state-waiting">
+                <div class = "row">
+                    <div class="col-md-12 opponents-turn">Opponents Turn</div>
+                    <div class="col-md-12 column-handler-container">
+                        <div class="row column-handler">
+                            <div class="col-md-2 player-stats">
+                                <div class="opponent">
+                                    <div class="profile">
+                                        <div class="img"></div>
+                                        <div class="name">Name</div>
+                                        <br>
+                                        <div>Position</div>
+                                        <br>
+                                        <div class="time"><span>4:23</span><div></div></div>
+                                        <span class="points">30</span>
+                                    </div>
+                                    <ul class="lost-pieces">
+                                        
+                                    </ul>
+                                </div>
+                                <div class="own">
+                                    <ul class="lost-pieces">
+                                        
+                                    </ul>
+                                    <div class="profile">
+                                        <span class="points">30</span>
+                                        <br>
+                                        <div class="time"><span>4:23</span><div></div></div>
+                                        <div class="img"></div>
+                                        <div>Position</div>
+                                        <br>
+                                        <div class="name">Name</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8 board-container">
+<!--                                <input type="button" onclick="BackToLobby();" value = "Back to lobby">-->
+                                <table class="board unselectable">
+
+                                </table>
+                                <div class="piece-box-container unselectable">
+                                    <ul class="piece-box unselectable">
+                                    </ul>
+                                    <div class="controls row">
+                                        <div class="col-xs-4">
+                                            <div class="switch" onclick="ToggleSwitch(this); ToggleAutoFeed();">Auto feed</div>
+                                            <div></div>
+                                            <div class="switch" onclick="ResetSetup(this);">Reset</div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="switch disabled ready" onclick="ToggleSwitch(this); SubmitPosition(this);">Ready</div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="switch">Formation</div>
+                                            <div class="switch" onclick="RandomizeSetup()">Randomize</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            </div>
+                            <div class="col-md-2 chatbox-container">
+                                <div class = "scroller">
+                                    <ul class="chatbox pm">
+<!--                                        <li><strong data-username ="Invictus" class="player"><span class = "name">Invictus</span></strong>quid<span class="emoticon-3"></span> nisi eu quorum ipsum</li>-->
+<!--
+                                        <li class="system-normal">adipisicing nisi dolore nam coniunctione</li>
+                                        <li class="system-warning">incididunt iudicem adipisicing varias sempiternum laboris ab</li>
+                                        <li class="system-alert">mentitum nulla occaecat proident</li>
+                                        <li class="incoming">mentitum nulla occaecat proident</li>
+                                        <li class="outgoing">mentitum nulla occaecat proident</li>
+                                        <li class="outgoing">mentitum</li>
+                                        <li class="incoming">proident</li>
+-->
+                                    </ul>
+                                </div>
+                                <div class="fader"></div>
+                                <input type="text" onkeyup="TieChatInputBox(this,-1);" class="input-box" placeholder="Type your message here" maxlength="255">
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-12 your-turn">Your Turn</div>
+                </div>
+            </div>
+
+        </div>
+        
+        
+        <div class="player-popover unselectable">
+            <div class="summary">
+                <!--                <img src="images/users/4.png" onerror="this.onerror=null;this.src='images/users/default.png';">-->
+                <div class="img"></div>
+                <div class="selectable">
+                    <strong class="name">cillum despicationes</strong>
+                    <div class="rank">relinqueret illum</div>
+                    <div class="experience"><div class="progress"></div></div>
+                    <ul class="details">
+                        <li>Win: </li>
+                        <li>Lose: </li>
+                        <li>Streak: </li>
+                    </ul>
+                </div>
+            </div>
+            <ul class="actions unselectable">
+                <li onclick="DoActionToPlayer(PlayerActions.CHALLENGE);" title = "Challenge" class="glyphicon glyphicon-screenshot"></li>
+                <li onclick="DoActionToPlayer(PlayerActions.MESSAGE);" title = "Message" class="glyphicon glyphicon-envelope"></li>
+                <li onclick="DoActionToPlayer(PlayerActions.ADD_AS_COMRADE);" title = "Add as Comrade" class="glyphicon glyphicon-user"></li>
+                <li onclick ="DoActionToPlayer(PlayerActions.REPORT);" title = "Report" class="glyphicon glyphicon-exclamation-sign"></li>
+                <li class ="relative-score">+210</li>
+            </ul>
+            <div class="glyphicon glyphicon-play"></div>
+        </div>
+
+        <div id = "test-panel"></div>
+        
+    </body>
+    
+</html>
