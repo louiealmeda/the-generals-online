@@ -7,7 +7,7 @@ require_once("arbiter.php");
 
 function Update()
 {
-    $toBeIncluded = ["won","opponentReady","opponentID", "setupTime"];
+    $toBeIncluded = ["won","opponentReady","opponentID", "setupTime","opponent","rank"];
     global $data;
 
     session_start();
@@ -21,6 +21,7 @@ function Update()
     
     if(isset($_SESSION["isGuest"]))
     {
+        
         $username = QuerySingleRow("SELECT Username FROM User WHERE Username = '{$_SESSION['username']}' && LastUpdated < DATE_SUB(NOW(),INTERVAL 120 SECOND)")["Username"];
 
         if($username != "")
@@ -29,11 +30,12 @@ function Update()
             $_SESSION["username"] = "";
         }
     }
-
     
     
     if(!isset($_SESSION["username"]))
+    {   
         $_SESSION["username"] = "";
+    }
 
     if(!isset($_SESSION["siteState"]))
     {   
@@ -42,18 +44,30 @@ function Update()
     }
     
     
-    if($_SESSION["siteState"] != SiteState::LOGIN)
-    {   
-        ExecuteQuery("UPDATE User SET LastUpdated = NOW() WHERE UserID = {$_SESSION['userID']}");
+    if(isset($_SESSION["userID"]))
+    {
+        if($_SESSION["siteState"] != SiteState::LOGIN)
+        {   
+            ExecuteQuery("UPDATE User SET LastUpdated = NOW() WHERE UserID = {$_SESSION['userID']}");
+        }
+    
+        if($_SESSION["siteState"] == SiteState::LOBBY)
+        {
+            CheckCommencingChallenge();
+            GetAllOnlinePlayers();
+            CheckPendingRequests();
+            FetchReceivedMessages();
+        }
+        
+        if($originalGameState != $_SESSION["gameState"] || $_POST["requestingBoard"] == 'true')
+        {   
+            GetBoard();
+            $_SESSION["rank"] = QuerySingleRow("SELECT Rank.Name FROM User, Rank WHERE Rank.RankID = User.Rank AND UserID = {$_SESSION['userID']}")["Name"];
+        }
+        
     }
     
-    if($_SESSION["siteState"] == SiteState::LOBBY)
-    {
-        CheckCommencingChallenge();
-        GetAllOnlinePlayers();
-        CheckPendingRequests();
-        FetchReceivedMessages();
-    }
+    
     
     if($_SESSION["siteState"] == SiteState::INGAME)
     {
@@ -61,14 +75,12 @@ function Update()
         FetchReceivedMessages("in-game");
         switch($_SESSION["gameState"])
         {
-            case GameState::SETUP:
-                $_SESSION["setupTime"] = QuerySingleRow("SELECT TIMEDIFF('00:02:00',TIMEDIFF(NOW(), TimeUpdated)) as time FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']}")["time"];
-                break;
-            
             case GameState::WAITING_TO_START:
                 CheckGameStart();
+            case GameState::SETUP:
+                GetBoard();
+                $_SESSION["setupTime"] = QuerySingleRow("SELECT TIMEDIFF('00:02:00',TIMEDIFF(NOW(), TimeUpdated)) as time FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']}")["time"];
                 break;
-
 
             case GameState::WAITING:
             case GameState::TURN:
@@ -76,30 +88,27 @@ function Update()
                 break;   
             
             case GameState::GAME_OVER:
+                GetBoard();
                 break;  
             
         }
-        
-        if($originalGameState != $_SESSION["gameState"] || $_POST["requestingBoard"] == 'true')
-            GetBoard();
-        
         
         if($_SESSION["gameState"] == GameState::TURN)
         {
             $data["self"]["time"] = GetTimeRemaining($_SESSION["matchID"], $_SESSION["userID"], $_SESSION["opponentID"] );
 
-            $data["opponent"]["time"] = QuerySingleRow("SELECT TimeRemaining FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']} && TurnUserID = {$_SESSION['opponentID']} ORDER BY MatchHistoryID DESC LIMIT 1")["TimeRemaining"];
+            $_SESSION["opponent"]["time"] = QuerySingleRow("SELECT TimeRemaining FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']} && TurnUserID = {$_SESSION['opponentID']} ORDER BY MatchHistoryID DESC LIMIT 1")["TimeRemaining"];
 
         }
         else if($_SESSION["gameState"] == GameState::WAITING)
         {
             $data["self"]["time"] = QuerySingleRow("SELECT TimeRemaining FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']} && TurnUserID = {$_SESSION['userID']} ORDER BY MatchHistoryID DESC LIMIT 1")["TimeRemaining"];
-            $data["opponent"]["time"] = GetTimeRemaining($_SESSION["matchID"], $_SESSION["opponentID"], $_SESSION["userID"] );
+            $_SESSION["opponent"]["time"] = GetTimeRemaining($_SESSION["matchID"], $_SESSION["opponentID"], $_SESSION["userID"] );
             
         }
         
         
-        CheckLooseDueToTime($data["self"]["time"],$data["opponent"]["time"]);
+        CheckLooseDueToTime($data["self"]["time"],$_SESSION["opponent"]["time"]);
         
         $data["gameState"] = $_SESSION["gameState"];
 
@@ -139,21 +148,24 @@ function CheckCommencingChallenge()
         $ret = QuerySingleRow("SELECT FirstPlayerID, SecondPlayerID FROM `Match` WHERE MatchID = $matchID");
         $firstPlayer = $ret["FirstPlayerID"];
         $secondPlayer = $ret["SecondPlayerID"];
+        $opponentID = 0;
         
         if($firstPlayer == $_SESSION["userID"])
         {   
-            $_SESSION["opponentID"] = $secondPlayer;
+            $opponentID = $secondPlayer;
             $_SESSION["side"] = PlayerSide::FIRST_PLAYER;
         }
         else
         {
-            $_SESSION["opponentID"] = $firstPlayer;
+            $opponentID = $firstPlayer;
             $_SESSION["side"] = PlayerSide::SECOND_PLAYER;
         }
 
-        $_SESSION["matchID"] = $matchID;
-        $_SESSION["siteState"] = SiteState::INGAME;
-        $_SESSION["gameState"] = GameState::SETUP;
+//        $_SESSION["matchID"] = $matchID;
+//        $_SESSION["siteState"] = SiteState::INGAME;
+//        $_SESSION["gameState"] = GameState::SETUP;
+        
+        InitializeMatch($opponentID, $matchID);
     }
 }
 
@@ -194,10 +206,22 @@ function AcceptChallenge()
     CancelAllChallenges();
     
     
-    $_SESSION["opponentID"] = $ret["InitiatorID"];
+//    $_SESSION["opponentID"] = $ret["InitiatorID"];
+//    $_SESSION["matchID"] = $matchID;
+//    $_SESSION["siteState"] = SiteState::INGAME;
+//    $_SESSION["gameState"] = GameState::SETUP;
+    InitializeMatch($ret["InitiatorID"], $matchID);
+}
+
+function InitializeMatch($opponentID, $matchID)
+{
+    session_start();
+    $_SESSION["opponentID"] = $opponentID;
     $_SESSION["matchID"] = $matchID;
     $_SESSION["siteState"] = SiteState::INGAME;
     $_SESSION["gameState"] = GameState::SETUP;
+    
+    $_SESSION["opponent"] = QuerySingleRow("SELECT User.Username, Rank.Name as Rank FROM User, Rank WHERE User.Rank = Rank.RankID AND UserID = $opponentID");
 }
 
 

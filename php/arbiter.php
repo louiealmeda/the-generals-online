@@ -60,6 +60,13 @@ function SetUpForNewMatch()
 
 }
 
+function Resign()
+{
+    session_start();
+    ExecuteQuery("UPDATE Match SET WinnerID = {$_SESSION['opponentID']}, Outcome = -1 WHERE MatchID {$_SESSION['matchID']}");
+    
+}
+
 function BackToLobby()
 {
     session_start();
@@ -74,7 +81,7 @@ function BackToLobby()
     unset($_SESSION["matchID"]);
     unset($_SESSION["side"]);
     unset($_SESSION["opponentID"]);
-    unset($_SESSION["setupTime"]);
+    unset($_SESSION["opponent"]);
 }
 
 function GetBoard()
@@ -237,9 +244,6 @@ function SendMove()
         echo json_encode($data);
         return;
     }
-    
-    
-    
     //if move is valid
     
     $isEngaged = strpos($ownPieces, $toValue) === FALSE;
@@ -361,8 +365,6 @@ function SendMove()
 //            $_SESSION["gameState"] = GameState::REVEAL_FLAG;
             ExecuteQuery("UPDATE `Match` SET Outcome = -2, WinnerID = {$_SESSION['userID']} WHERE MatchID = {$_SESSION['matchID']}");
         }
-        
-        
     }
     
 //    echo json_encode($board);
@@ -426,7 +428,6 @@ function SendMove()
     
     GetBoard();
     
-    
     echo json_encode($data);
 }
 
@@ -459,7 +460,7 @@ function CheckLooseDueToTime($own, $opponent)
         $_SESSION["won"] = 0;
         $_SESSION["gameState"] = GameState::GAME_OVER;
         ExecuteQuery("UPDATE `Match` SET Outcome = 3, WinnerID = {$_SESSION['opponentID']} WHERE MatchID = {$_SESSION['matchID']}");
-        echo "Loosing: You have " . $own . "|" . $opponent;
+//        echo "Loosing: You have " . $own . "|" . $opponent;
     }
     
     if( count(explode("0", $opponent)) == 7 || count(explode("-", $opponent)) == 2)
@@ -467,7 +468,7 @@ function CheckLooseDueToTime($own, $opponent)
         $_SESSION["won"] = 1;
         $_SESSION["gameState"] = GameState::GAME_OVER;
         ExecuteQuery("UPDATE `Match` SET Outcome = 3, WinnerID = {$_SESSION['userID']} WHERE MatchID = {$_SESSION['matchID']}");
-        echo "Winning: You have " . $own . "|" . $opponent;
+//        echo "Winning: You have " . $own . "|" . $opponent;
     }
     
 }
@@ -481,6 +482,7 @@ function CheckOponentsUpdate()
     if($ret["Turn"] == $_SESSION["side"])
     {
         $_SESSION["gameState"] = GameState::TURN;
+        GetBoard();
 //        echo "Outcome:" . $ret["Outcome"];
         
         if($ret["Outcome"] != 0)
@@ -530,7 +532,7 @@ function CheckGameStart()
         
         unset($_SESSION["opponentReady"]);
         unset($_SESSION["selfReady"]);
-        
+        unset($_SESSION["setupTime"]);
         ExecuteQuery("UPDATE MatchHistory SET TimeUpdated = NOW()");
     }
     else
@@ -551,14 +553,17 @@ function CheckGameStart()
     
 }
 
-function SubmitSetupPosition()
+function SubmitSetupPosition($isPartial = false)
 {
-    
-    $_POST["board"] = DigestBoard($_POST["board"]);
-    
     session_start();
+    global $data;
     if($_SESSION["gameState"] != GameState::SETUP)
         return;
+    
+    $isPartial = isset($_POST['isPartial']);
+    
+    
+    $_POST["board"] = DigestBoard($_POST["board"]);
     
     
     $pieces = [6,1,6,1,1,1,1,1,1,1,1,1,1,1,1,2];
@@ -567,15 +572,17 @@ function SubmitSetupPosition()
     global $firstPlayerPieces;
     global $secondPlayerPieces;
     
-    
     if($_SESSION["side"] == PlayerSide::FIRST_PLAYER)
         $piecesLegend = $firstPlayerPieces;
+    
     else
         $piecesLegend = $secondPlayerPieces;
     
-    $data = [];
-    $data["error"] = -1;
-    $data["gameState"] = -1;
+    
+    
+//    $data = [];
+//    $data["error"] = -1;
+//    $data["gameState"] = -1;
     
 
     $startIndex = 0;
@@ -597,13 +604,11 @@ function SubmitSetupPosition()
     }
     
     
-//    echo json_encode($_POST["board"]);
-    
     $height = count($blocks);
     $width = count($blocks[0]);
     
     
-    
+    //count every pieces
     for($y = 5; $y < 8; $y++)
     {
         for($x = 0; $x < $width; $x++)
@@ -612,24 +617,19 @@ function SubmitSetupPosition()
         }
     }
     
-    
-//    
-//    echo $piecesLegend;
-//    echo json_encode($pieces);
-    
-    
+    //check if all pieces are placed with exact number
+    $i = 0;
     foreach($pieces as $piece)
     {
-        if($piece != 0)
+        if( (!$isPartial && $piece != 0) || ($isPartial && ($piece < 0 && $i != 0) ) )
         {
             $data["error"] = Error::INVALID_SETUP . "";
             $data["pieces"] = array_slice($piecesRef,1);
+            $data["test"] = $pieces;
             die(json_encode($data));
         }
+        $i++;
     }
-    
-//    echo "Here";
-    
     
     if(GetPlayerSide() == PlayerSide::FIRST_PLAYER) 
     {
@@ -661,14 +661,6 @@ function SubmitSetupPosition()
         }
     }
     
-//    echo json_encode($board);
-//    echo json_encode($board);
-    
-//    foreach($board as &$line)
-//        $line = implode("",$line);
-//    
-//    $board = implode("/",$board);
-//    echo $board;
     $board = BoardToString($board);
     
     $field = "FirstPlayerPoint";
@@ -676,16 +668,28 @@ function SubmitSetupPosition()
     if($_SESSION["side"] == PlayerSide::SECOND_PLAYER)
         $field = "SecondPlayerPoint";
     
-    ExecuteQuery("UPDATE MatchHistory SET Board = '$board', $field = 0 WHERE MatchID = {$_SESSION["matchID"]}");
+    $score = "0";
     
-    $_SESSION["gameState"] = GameState::WAITING_TO_START;
+    if($isPartial)
+        $score = "-1";
     
-    $data["gameState"] = GameState::WAITING_TO_START . "";
+    ExecuteQuery("UPDATE MatchHistory SET Board = '$board', $field = $score WHERE MatchID = {$_SESSION["matchID"]}");
+    
+//    echo "Partial: " . $score;
+    
+    if(!$isPartial)
+    {
+        $_SESSION["gameState"] = GameState::WAITING_TO_START;
+        $data["gameState"] = GameState::WAITING_TO_START . "";
+        $data["selfReady"] = 1;
+    }
+    
+    
+    
+    
+    GetBoard();
     
     echo(json_encode($data));
-    
-    $data["selfReady"] = 1;
-    
 }
 
 

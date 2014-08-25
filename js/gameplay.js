@@ -15,7 +15,7 @@ var Errors =
     INVALID_MOVE : 2
 }
 
-var currentGameState = GameStates.SETUP;
+var currentGameState = -1;
 
 var rankTitles = ["Flag","Private","Sergeant","2nd Lieutenant","1st Lieutenant","Captain","Major","Lt. Colonel","Colonel","Brigadier General","Major General","Lieutenant General","Four-star General","Five-star General","Spy"];
 
@@ -235,6 +235,7 @@ function SubmitPosition(sender)
     UpdateBoardContent();
     $.post("php/arbiter.php", {"method":"SubmitSetupPosition", "board": board.content}, function(data){
 
+//        alert(data);
         data = JSON.parse(data);
         
         if(data.error == Errors.INVALID_SETUP)
@@ -252,6 +253,21 @@ function SubmitPosition(sender)
         }
     });
 }
+
+function AutoSubmitPartialPosition()
+{
+    
+    UpdateBoardContent();
+    $.post("php/arbiter.php", {"method":"SubmitSetupPosition", "isPartial": true, "board": board.content}, function(data){
+
+//        $("#test-panel").html(data);
+//        alert(data);
+//        board.content = data.board;
+//        GenerateBoard();
+        
+    });
+}
+
 
 function UpdateBoardContent()
 {
@@ -464,14 +480,26 @@ function ResizeBoard()
     
 }
 
-
 function GameStateChanged(data)
 {
+    
+    
     switch(data.gameState)
     {
         case GameStates.GAME_OVER:
+            var color = data.won == 0 ? "red" : "green"
             data.won = data.won == 0 ? "You lose!" : "You won!";
-            Notification.Show(data.won, "You captured your opponent's flag. You gained 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", "red");
+            Notification.Show(data.won, "You captured your opponent's flag. You gained 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", color);
+            break;
+            
+        case GameStates.WAITING_TO_START:
+            board.content = data.board;
+            GenerateBoard();
+            break;
+            
+        case GameStates.TURN:
+//            alert();
+//            alert(data.board);
             break;
     }
 }
@@ -479,10 +507,31 @@ function GameStateChanged(data)
 function UpdateFeedBack(data)
 {   
     
+//    alert();
+//    alert(JSON.stringify(ownDetails));
+//    
+    $(".game-area .player-stats .opponent .rank").html(data.opponent.Rank);
+    $(".game-area .player-stats .opponent .name").html(data.opponent.Username);
+    $(".game-area .player-stats .opponent .img").css({"background-image":"url(images/users/" + data.opponent.Username + ".png) , url(images/users/default.png)"});
+
+    $(".game-area .player-stats .own .rank").html(ownDetails.Rank);
+    $(".game-area .player-stats .own .name").html(ownDetails.Username);
+    $(".game-area .player-stats .own .img").css({"background-image":"url(images/users/" + ownDetails.Username + ".png) , url(images/users/default.png)"});
+    
+    
     
     switch(data.gameState)
     {
         case GameStates.SETUP:
+            AutoSubmitPartialPosition();
+        case GameStates.WAITING_TO_START:
+            
+            if(data.gameState != GameStates.SETUP)
+            {
+//                alert(board.content);
+                board.content = data.board;
+                GenerateBoard();
+            }
             
             UpdateTimeLine(2*60,data.setupTime, "own");
             UpdateTimeLine(2*60,data.setupTime, "opponent");

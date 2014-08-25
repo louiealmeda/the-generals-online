@@ -81,6 +81,7 @@ function GameEventHandler(data)
             AppendMessage(data.chat);
             if(data.ownDetails != null)
                 ownDetails = data.ownDetails;
+            
             UpdateLobby(data);
             break;
     }
@@ -116,8 +117,11 @@ function GameEventHandler(data)
             currentGameState = data.gameState;
             switch(data.gameState)
             {
+                
                 case GameStates.WAITING:
                 case GameStates.TURN:
+//                    alert();
+//                    alert(data.board);
                     board.content = data.board;
                     GenerateBoard();
                     $(".game-area .player-stats .ready").removeClass("ready");
@@ -133,6 +137,7 @@ function GameEventHandler(data)
         }
         
         ownDetails.Username = data.username;
+        ownDetails.Rank = data.rank;
         
         
         UpdateFeedBack(data);

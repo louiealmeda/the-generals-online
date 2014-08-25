@@ -21,6 +21,18 @@ $currentScreen = ".container.main";
 
 $(document).ready(function(){
     
+    
+    if(window.location.hash) 
+    {
+        switch(window.location.hash)
+        {
+            case "#destroy":
+                Logout();
+                break;
+        }
+    }
+    
+    
     Notification.Html = $(".notification-window").wrap("<div>").parent().html();
 //    MoveScreen(-200);
     
