@@ -63,8 +63,10 @@ function SetUpForNewMatch()
 function Resign()
 {
     session_start();
-    ExecuteQuery("UPDATE Match SET WinnerID = {$_SESSION['opponentID']}, Outcome = -1 WHERE MatchID {$_SESSION['matchID']}");
-    
+    ExecuteQuery("UPDATE `Match` SET WinnerID = {$_SESSION['opponentID']}, Outcome = -1 WHERE MatchID = {$_SESSION['matchID']}");
+    $_SESSION["gameState"] = GameState::GAME_OVER;
+    $_SESSION["won"] = -2;
+//    $_SESSION[""];
 }
 
 function BackToLobby()
@@ -87,6 +89,10 @@ function BackToLobby()
 function GetBoard()
 {
     session_start();
+    
+    if(!isset($_SESSION["matchID"]))
+        return;
+    
     global $firstPlayerPieces;
     global $secondPlayerPieces;
     global $data;
@@ -476,41 +482,41 @@ function CheckLooseDueToTime($own, $opponent)
 //0: nothing yet, 1: Won by capture, 2: Won by Goal, -1: Won by resign; -2 Show Flag
 function CheckOponentsUpdate()
 {
-//    echo "test";
     session_start();
     $ret = QuerySingleRow("SELECT Turn, Outcome, WinnerID FROM `Match` WHERE MatchID = {$_SESSION['matchID']}");
-    if($ret["Turn"] == $_SESSION["side"])
+    
+    if( $ret["Turn"] == $_SESSION["side"] && $_SESSION["gameState"] == GameState::WAITING)
     {
         $_SESSION["gameState"] = GameState::TURN;
         GetBoard();
-//        echo "Outcome:" . $ret["Outcome"];
-        
-        if($ret["Outcome"] != 0)
+    }
+
+
+    if($ret["Outcome"] != 0)
+    {
+        switch($ret["Outcome"])
         {
-            switch($ret["Outcome"])
-            {
-                case 1:
-                case 2: 
-                case -1:
-                case 3:
-                    if($ret["WinnerID"] == $_SESSION["userID"])
-                    {
-                        $_SESSION["won"] = 1;
-                    }
-                    else
-                    {   
-                        $_SESSION["won"] = 0;
-                    }
-                    
-                $_SESSION["gameState"] = GameState::GAME_OVER;
-                break;
-                
-                case -2:
-                    $_SESSION["won"] = -3;
-                break;
-            }
-            
+            case 1:
+            case 2: 
+            case -1:
+            case 3:
+                if($ret["WinnerID"] == $_SESSION["userID"])
+                {
+                    $_SESSION["won"] = 1;
+                }
+                else
+                {   
+                    $_SESSION["won"] = 0;
+                }
+
+            $_SESSION["gameState"] = GameState::GAME_OVER;
+            break;
+
+            case -2:
+                $_SESSION["won"] = -3;
+            break;
         }
+
     }
 }
 

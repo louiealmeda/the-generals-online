@@ -643,3 +643,26 @@
     cursor: alias !important;
 }
 
+
+.game-area .menu-bar {
+    position: relative;
+    list-style: none;
+    padding: 0px;
+    font-size: 16px;
+    display: inline-block;
+    background-color: rgba(0,0,0,0.8);
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 5px 5px 3px rgba(0,0,0,0.5);
+    z-index: 200;
+    border: 1px solid #0af;
+}
+
+.game-area .menu-bar li {
+    display: inline-block;
+/*
+    padding: 2px 5px;
+    border-radius: 5px;
+    background-color: #222;
+*/
+}

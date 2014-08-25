@@ -33,6 +33,8 @@
     background-color: rgba(0,0,0,0.5);
     font-family: sans-serif;
     z-index: 1000;
+/*    bottom: 0px;*/
+/*    display: none;*/
 }
 
 *{
@@ -838,6 +840,8 @@ input:focus{
         40px 40px 5px rgba(0,0,0,0.5);
 }
 
+
+
 .notification-window.blue{
     box-shadow: 
         0px 0px 0px 2px #0AF,
@@ -870,7 +874,17 @@ input:focus{
     padding-top: 5px;
 }
 
+.notification-window hr{
+    margin: 0px;
+    border: 1px solid gray;
+}
 
+.notification-window.red hr{border-color: red}
+.notification-window.green hr{border-color: green}
+.notification-window.blue hr{border-color: #0af}
+
+
+.btn.small{padding: 2px 5px;}
 .btn.red{ background-color: rgb(150,0,0); color: white; }
 .btn.red:hover{ background-color: rgb(200,0,0); }
 

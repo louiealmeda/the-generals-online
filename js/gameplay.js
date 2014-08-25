@@ -928,6 +928,37 @@ function RandomizeSetup()
         $(e).attr("data-piece", piecesLegend[next]);
         $(e).draggable("enable");
     });
-    
+}
 
+function Resign()
+{
+    $.post("php/arbiter.php",{method: "Resign" }, function(data){
+        alert(data);
+        Notification.Close();
+    });
+}
+
+function ConfirmResign()
+{
+    var content = "";
+    content += "You will lose this match if you resign.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    content += "<br><br><div class='btn red' onclick='Resign();'>Yes</div>\n";
+    content += "<div class='btn green' onclick='Notification.Close();'>Cancel</div>\n";
+    
+    Notification.Show("Are you sure you want to resign?",content,"red", false, 350);
+}
+
+function OpenInGameMenu()
+{
+    
+    var content = "";
+    content += "<div class='btn red' onclick='ConfirmResign();'>Resign</div>\n";
+    content += "<div class='btn blue' onclick='Notification.Close();'>Close</div>\n";
+    
+    Notification.Show("Menu",content,"blue");
+}
+
+function OpenHowToPlay()
+{
+    Notification.Show("How To Play","hic quis offendit iudicem quem","blue");   
 }

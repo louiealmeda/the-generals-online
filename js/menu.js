@@ -2,7 +2,8 @@ var Notification = {
     Show: ShowNotification,
     Html: "",
     Object: null,
-    Close: CloseNotification
+    Close: CloseNotification,
+    IsOpen: false
 }
 
 
@@ -553,49 +554,66 @@ function ToggleSwitch(sender)
     
 }
 
-function ShowNotification(title, body, addedClass)
+function ShowNotification(title, body, addedClass,fixSize,iwidth)
 {
-    $(".notification-window").replaceWith(Notification.Html);
-    Notification.Object = $(".notification-window");
-    Notification.Object.children(".title").html(title);
-    Notification.Object.children(".body").html(body);
-    Notification.Object.addClass(addedClass);
-    Notification.Object.css("width","200px");
-    
-    var height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
-    var width = Notification.Object.width();
-    
-    if(height>width)
+    fixSize = fixSize || false;
+    iwidth = iwidth || 200;
+    var time = 0;
+    if(Notification.IsOpen)
     {
-        var dif = (height - width) * 3;
-        
-        Notification.Object.css("width", "+=" +dif+ "px");
-        height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
-        width = Notification.Object.width();
-        
+        time = 800;
+        Notification.Close();
     }
     
-    Notification.Object.css({
-        "transition":"0.2s height 0s, 0.2s width 0.2s",
-        "width":"0px",
-        "height":"0px",
-        "visibility":"hidden"
-    });
+    
+    Notification.IsOpen = true;
     
     setTimeout(function(){
+        
+        $(".notification-window").replaceWith(Notification.Html);
+        Notification.Object = $(".notification-window");
+        Notification.Object.children(".title").html(title);
+        Notification.Object.children(".body").html(body);
+        Notification.Object.addClass(addedClass);
+        Notification.Object.css("width",iwidth + "px");
+
+        var height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
+        var width = Notification.Object.width();
+
+        while( height>width && !fixSize )
+        {
+//            var dif = (height - width) * 3;
+            var dif = width += 10;
+            
+            Notification.Object.css("width", "+=" +dif+ "px");
+            height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
+            width = Notification.Object.width();
+        }
+
         Notification.Object.css({
-            "width": width+"px",
-            "height":height + "px",
-            "visibility":"visible"
+            "transition":"0.2s height 0s, 0.2s width 0.2s",
+            "width":"0px",
+            "height":"0px",
+            "visibility":"hidden"
         });
+
+        setTimeout(function(){
+            Notification.Object.css({
+                "width": width+"px",
+                "height":height + "px",
+                "visibility":"visible"
+            });
+
+            Notification.Object.children().css("opacity","1");
+
+        },500);
         
-        Notification.Object.children().css("opacity","1");
-        
-    },500);
+    },time);
 }
 
 function CloseNotification()
 {
+    Notification.IsOpen = false;
     Notification.Object.children().css({
         "opacity":"0",
         "transition":"0.5s all 0s"

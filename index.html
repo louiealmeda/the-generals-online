@@ -120,13 +120,18 @@
             </div>
         </div>
         <div class="container gameplay state-waiting"
+                style="top: -200%; background-color: black; z-index: 999;"
              >
              
-<!--                style="top: -200%; background-color: black; z-index: 999;"-->
-            
             <div class="game-area">
                 <div class = "row">
-                    <div class="col-md-12 opponents-turn">Opponents Turn</div>
+                    <div class="col-md-12 opponents-turn">
+                        <ul class="menu-bar">
+                            <li class="btn small gray" onclick="OpenInGameMenu()">Menu</li>
+                            <li class="btn small gray" onclick="OpenHowToPlay()">How to play</li>
+                        </ul>
+ 
+                    </div>
                     <div class="col-md-12 column-handler-container">
                         <div class="row column-handler">
                             <div class="col-md-2 player-stats">
@@ -150,7 +155,6 @@
                                     </ul>
                                     <div class="profile">
                                         <span class="points">30</span>
-                                        <a id="resign" onclick="Resign()">Resign</a>
                                         <br>
                                         <div class="time"><span>4:23</span><div></div></div>
                                         <div class="img"></div>
@@ -207,7 +211,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-md-12 your-turn">Your Turn</div>
+                    <div class="col-md-12 your-turn">&nbsp;</div>
                 </div>
             </div>
 
