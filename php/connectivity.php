@@ -7,7 +7,7 @@ require_once("arbiter.php");
 
 function Update()
 {
-    $toBeIncluded = ["won","opponentReady","opponentID", "setupTime","opponent","rank"];
+    $toBeIncluded = ["won", "outcome","opponentReady","opponentID", "setupTime","opponent","rank"];
     global $data;
 
     session_start();

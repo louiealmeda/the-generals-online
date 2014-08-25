@@ -613,10 +613,15 @@
     color: green;
 }
 
-.game-area.state-show-flag .board td.enemy-flag{
-    /*    background-color: blue;*/
+.game-area .board td.enemy{
+/*    background-color: blue;*/
     background-image: url(../images/pieces/0.png), url(../images/tiles/0.png) !important;
+/*    background-blend-mode: screen, normal;*/
+    
+/*    background-image: url(), url(../images/tiles/0.png);*/
+    background-color: #300;
     background-blend-mode: normal, screen;
+/*    outline: 1px solid red;*/
 }
 
 

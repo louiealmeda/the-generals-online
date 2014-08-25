@@ -63,9 +63,13 @@ function SetUpForNewMatch()
 function Resign()
 {
     session_start();
+    if($_SESSION["gameState"] == GameState::GAME_OVER)
+        return;
+    
     ExecuteQuery("UPDATE `Match` SET WinnerID = {$_SESSION['opponentID']}, Outcome = -1 WHERE MatchID = {$_SESSION['matchID']}");
     $_SESSION["gameState"] = GameState::GAME_OVER;
-    $_SESSION["won"] = -2;
+    $_SESSION["won"] = 0;
+    $_SESSION["outcome"] = -1;
 //    $_SESSION[""];
 }
 
@@ -80,6 +84,7 @@ function BackToLobby()
     $_SESSION["gameState"] = -1;
     
     unset($_SESSION["won"]);
+    unset($_SESSION["outcome"]);
     unset($_SESSION["matchID"]);
     unset($_SESSION["side"]);
     unset($_SESSION["opponentID"]);
@@ -135,10 +140,13 @@ function GetBoard()
     }
     
     
-   
-    $data["board"] = HideOponents($board, $piecesToHide);
-    
-//    echo "You have";
+    if($_SESSION['gameState'] != GameState::GAME_OVER)
+        $data["board"] = HideOponents($board, $piecesToHide);
+    else
+    {
+        $data["side"] = $_SESSION["side"];
+        $data["board"] = $board;
+    }
 }
 
 function SendMove()
@@ -333,6 +341,8 @@ function SendMove()
             $data["wonDetected"] = 0;
             $_SESSION["gameState"] = GameState::GAME_OVER;
             $_SESSION["won"] = 0;
+            $_SESSION["outcome"] = 1;
+            
             ExecuteQuery("UPDATE `Match` SET Outcome = 1, WinnerID = {$_SESSION['opponentID']} WHERE MatchID = {$_SESSION['matchID']}");
         }
         
@@ -342,6 +352,7 @@ function SendMove()
 //            $data["wonDetected"] = 1;
             $_SESSION["gameState"] = GameState::GAME_OVER;
             $_SESSION["won"] = 1;
+            $_SESSION["outcome"] = 1;
 //            
             ExecuteQuery("UPDATE `Match` SET Outcome = 1, WinnerID = {$_SESSION['userID']} WHERE MatchID = {$_SESSION['matchID']}");
         }
@@ -363,10 +374,11 @@ function SendMove()
             $_SESSION["won"] = 0;
             $_SESSION["gameState"] = GameState::GAME_OVER;
             ExecuteQuery("UPDATE `Match` SET Outcome = 2, WinnerID = {$_SESSION['opponentID']} WHERE MatchID = {$_SESSION['matchID']}");
-            
+
         }
         else if($offender == 1 && $toTile["y"] == $goal)
         {
+            $_SESSION["outcome"] = 2;
             $_SESSION["won"] = -2;   
 //            $_SESSION["gameState"] = GameState::REVEAL_FLAG;
             ExecuteQuery("UPDATE `Match` SET Outcome = -2, WinnerID = {$_SESSION['userID']} WHERE MatchID = {$_SESSION['matchID']}");
@@ -434,6 +446,8 @@ function SendMove()
     
     GetBoard();
     
+    CheckOponentsUpdate();
+    
     echo json_encode($data);
 }
 
@@ -463,8 +477,10 @@ function CheckLooseDueToTime($own, $opponent)
     
     if( count(explode("0", $own)) == 7 || count(explode("-", $own)) == 2)
     {
+        
         $_SESSION["won"] = 0;
         $_SESSION["gameState"] = GameState::GAME_OVER;
+        $_SESSION["outcome"] = 3;
         ExecuteQuery("UPDATE `Match` SET Outcome = 3, WinnerID = {$_SESSION['opponentID']} WHERE MatchID = {$_SESSION['matchID']}");
 //        echo "Loosing: You have " . $own . "|" . $opponent;
     }
@@ -473,13 +489,14 @@ function CheckLooseDueToTime($own, $opponent)
     {
         $_SESSION["won"] = 1;
         $_SESSION["gameState"] = GameState::GAME_OVER;
+        $_SESSION["outcome"] = 3;
         ExecuteQuery("UPDATE `Match` SET Outcome = 3, WinnerID = {$_SESSION['userID']} WHERE MatchID = {$_SESSION['matchID']}");
 //        echo "Winning: You have " . $own . "|" . $opponent;
     }
     
 }
 
-//0: nothing yet, 1: Won by capture, 2: Won by Goal, -1: Won by resign; -2 Show Flag
+//0: nothing yet, 1: Won by capture, 2: Won by Goal, 3 Won by Time, -1: Won by resign; -2 Show Flag
 function CheckOponentsUpdate()
 {
     session_start();
@@ -494,6 +511,8 @@ function CheckOponentsUpdate()
 
     if($ret["Outcome"] != 0)
     {
+        
+        
         switch($ret["Outcome"])
         {
             case 1:
@@ -508,7 +527,7 @@ function CheckOponentsUpdate()
                 {   
                     $_SESSION["won"] = 0;
                 }
-
+            $_SESSION["outcome"] = $ret["Outcome"];
             $_SESSION["gameState"] = GameState::GAME_OVER;
             break;
 

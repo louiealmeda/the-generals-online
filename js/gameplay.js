@@ -1,3 +1,12 @@
+var Outcomes = {
+    DEFAULT: 0,
+    CAPTURE: 1,
+    GOAL: 2,
+    TIME: 3,
+    RESIGN: -1,
+    SHOW_FLAG: -2
+}
+
 var GameStates = {
     SETUP: 0,
     WAITING_TO_START: 1,
@@ -335,9 +344,14 @@ function RefreshPieceBox()
         
 }
 
-function GenerateBoard()
+function GenerateBoard(isEnemyShown)
 {
+    if(isEnemyShown !== 0)
+        isEnemyShown = isEnemyShown || -1;
+    
     var isBoardCreated = $(".game-area .board").hasClass("isCreated");
+    
+//    alert(isEnemyShown);
     
     //Resize Board
     
@@ -345,6 +359,8 @@ function GenerateBoard()
     board.content = tmpBoard.split("/");
     var tmpBoardContent = "";
     var exclude = "v<>^0*#+";
+    
+    
     
     for(var y = 0; y < board.height; y++ )
     {
@@ -357,7 +373,6 @@ function GenerateBoard()
             
             var tooltip = rankTitles[piecesLegend.indexOf(currentPiece)];
             var tmp = board.content[y][x];
-            
             
             
             var owned = "owned";
@@ -374,13 +389,23 @@ function GenerateBoard()
                 {
                     alert("Flag Shown");
                     tmp = "*";
-                    owned = "enemy-flag";
+                    owned = "enemy";
                     currentPiece = "*";
                 }
+            }
+            else if(isEnemyShown != -1)
+            {
+                   
+//                alert("here");
+                var isLower = tmp == tmp.toLowerCase();
                 
+                if(isEnemyShown == 1 && isLower || isEnemyShown == 0 && !isLower)
+                {
+                    owned = "owned enemy";
+                }
+                    
             }
             
-
             
             if(tooltip == undefined)
                 tooltip = "";
@@ -487,9 +512,37 @@ function GameStateChanged(data)
     switch(data.gameState)
     {
         case GameStates.GAME_OVER:
+            
+//            Notification.Show("title","content","blue");
+            
+            
+            var messages = [];
+            
+            messages[1] = {};
+            messages[1][Outcomes.CAPTURE] = "You captured your opponent's flag.";
+//            alert(data.outcome);
+            messages[1][Outcomes.GOAL] = "You maneuvered your flag to your opponent's based.";
+            messages[1][Outcomes.RESIGN] = "Your opponent resigned.";
+            messages[1][Outcomes.TIME] = "Your opponent ran out of time.";
+            
+            messages[0] = {};
+            messages[0][Outcomes.CAPTURE] = "Your flag is captured.";
+            messages[0][Outcomes.GOAL] = "Your opponent's flag reached your base.";
+            messages[0][Outcomes.RESIGN] = "You resigned.";
+            messages[0][Outcomes.TIME] = "You ran out of time.";
+            
+            
             var color = data.won == 0 ? "red" : "green"
-            data.won = data.won == 0 ? "You lose!" : "You won!";
-            Notification.Show(data.won, "You captured your opponent's flag. You gained 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", color);
+            var gain = data.won == 0 ? "lost" : "gained"
+            var title = data.won == 0 ? "You lose!" : "You won!";
+            
+            
+            Notification.Show(title, messages[data.won][data.outcome] + " You "+gain+" 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", color);
+            
+            board.content = data.board;
+//            alert(data.side);
+            GenerateBoard(data.side);
+            
             break;
             
         case GameStates.WAITING_TO_START:
