@@ -81,6 +81,9 @@ function Update()
                 CheckOponentsUpdate();
                 GetBoard();
                 $_SESSION["setupTime"] = QuerySingleRow("SELECT TIMEDIFF('00:02:00',TIMEDIFF(NOW(), TimeUpdated)) as time FROM MatchHistory WHERE MatchID = {$_SESSION['matchID']}")["time"];
+                
+                CheckGameAutoStarting($_SESSION["setupTime"]);
+            
                 break;
 
             case GameState::WAITING:
@@ -123,6 +126,9 @@ function Update()
             $data[$item] = $_SESSION[$item];
 
     }
+    
+    if($_SESSION["won"] == -3)
+        GetBoard();
     
     
 //    $data["opponentID"] = $_SESSION["opponentID"];

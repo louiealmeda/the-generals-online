@@ -395,8 +395,6 @@ function SendMove()
     
     if($isEngaged)
     {
-
-
         if($_SESSION["side"] == PlayerSide::FIRST_PLAYER)
         {
             $lostPieces["First"] .= $oLost; 
@@ -471,6 +469,110 @@ function GetTimeRemaining($matchID, $selfID, $opponentID )
 }
 
 
+function CheckGameAutoStarting($timeRemaining)
+{
+    session_start();
+    global $data;
+    global $firstPlayerPieces;
+    global $secondPlayerPieces;
+    global $piecesCount;
+    
+    $pieces = $_SESSION['side'] == PlayerSide::FIRST_PLAYER ? $firstPlayerPieces : $secondPlayerPieces;
+    $start = $_SESSION['side'] == PlayerSide::FIRST_PLAYER ? 0 : 5;
+    $counter = $piecesCount;
+    
+//    return;
+    
+//    echo "Here";
+    if( $_SESSION["gameState"] == GameState::SETUP && (count(explode("0", $timeRemaining)) == 7 || count(explode("-", $timeRemaining)) == 2) )
+    {
+//        GetBoard();
+//        $tmpBoard = explode("/",$data["board"]);
+        $tmpBoard = QuerySingleRow("SELECT Board FROM MatchHistory WHERE MatchID = {$_SESSION["matchID"]}")["Board"];
+        $tmpBoard = explode("/",$tmpBoard);
+        
+        
+        $board  = $tmpBoard[ $start     ];
+        $board .= "/" . $tmpBoard[ $start + 1 ];
+        $board .= "/" . $tmpBoard[ $start + 2 ];
+        
+        
+        
+        //count placed pieces
+        for($i = 1; $i < count($counter); $i++)
+        {
+            $counter[$i] -= substr_count($board, $pieces[$i]);
+        }
+        
+//        $data[tmp] = json_encode($counter);
+        
+        //determine free blocks
+        $freeBlocks = [];
+        $offset = 0;
+        while( ($index = strpos($board, "0", $offset)) !== false )
+        {
+            $freeBlocks[count($freeBlocks)] = $index;
+            $offset = $index + 1;
+
+        }
+        
+//        $data["tmp2"] = json_encode($freeBlocks);
+
+        //add piece concentration, just change offset's positivity
+        
+        //place left pieces
+        for($i = 1; $i < count($counter); $i++)
+        {
+            for($j = 0; $j < $counter[$i]; $j++)
+            {
+                $pos = rand(0, count($freeBlocks) - 4);
+                
+                $board[$freeBlocks[$pos]] = $pieces[$i];
+                
+                unset($freeBlocks[$pos]);
+                
+                $freeBlocks = array_values($freeBlocks);
+            }
+        }
+        
+//        $data["tmp2 "] = $board;
+        
+        $currentBoard = explode("/", QuerySingleRow("SELECT Board FROM MatchHistory WHERE MatchID = {$_SESSION["matchID"]}")["Board"]);
+        
+        unset($currentBoard[ $start     ]);
+        unset($currentBoard[ $start + 1 ]);
+        unset($currentBoard[ $start + 2 ]);
+        
+        $currentBoard = array_values($currentBoard);
+        
+        $field = "FirstPlayerPoint";
+
+        if($_SESSION["side"] == PlayerSide::SECOND_PLAYER)
+        {
+            $field = "SecondPlayerPoint";
+            $currentBoard[count($currentBoard)] = $board;
+        }
+        else
+        {
+            array_splice( $currentBoard, 0, 0, $board );   
+//            $currentBoard[count($currentBoard)] = $board;
+        }
+            
+
+
+        $currentBoard = implode("/", $currentBoard);
+//        $data["side"] = $_SESSION["side"];
+//        $data["tmp "] = $currentBoard;
+        
+        ExecuteQuery("UPDATE MatchHistory SET Board = '$currentBoard', $field = 0 WHERE MatchID = {$_SESSION["matchID"]}");
+        
+        $_SESSION["gameState"] = GameState::WAITING_TO_START;
+        $data["gameState"] = GameState::WAITING_TO_START . "";
+        $data["selfReady"] = 1;
+        
+    }
+}
+
 function CheckLooseDueToTime($own, $opponent)
 {
     session_start();
@@ -532,7 +634,8 @@ function CheckOponentsUpdate()
             break;
 
             case -2:
-                $_SESSION["won"] = -3;
+                if($ret["WinnerID"] == $_SESSION["opponentID"])
+                    $_SESSION["won"] = -3;
             break;
         }
 

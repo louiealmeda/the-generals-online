@@ -43,6 +43,7 @@ abstract class EngagementOutcome
 
 $firstPlayerPieces = "0abcdefghijklmno";
 $secondPlayerPieces = "0ABCDEFGHIJKLMNO";
+$piecesCount = [6,1,6,1,1,1,1,1,1,1,1,1,1,1,1,2];
 $data;
 
 $data["error"] = -1;

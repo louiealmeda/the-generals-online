@@ -353,14 +353,15 @@ function GenerateBoard(isEnemyShown)
     
 //    alert(isEnemyShown);
     
-    //Resize Board
     
+    if(board.content.indexOf("+") != -1)
+        alert(board.content);
+    
+    //Resize Board
     tmpBoard = board.content;
     board.content = tmpBoard.split("/");
     var tmpBoardContent = "";
     var exclude = "v<>^0*#+";
-    
-    
     
     for(var y = 0; y < board.height; y++ )
     {
@@ -419,7 +420,7 @@ function GenerateBoard(isEnemyShown)
             else{
                 $tile = $(".board td[data-y='"+y+"'][data-x='"+x+"']");
             
-                $tile.removeClass("owned");
+                $tile.removeClass("owned").removeClass("enemy");
                 $tile.addClass(owned);
                 $tile.html(tmp);
                 $tile.attr("data-piece", currentPiece);
