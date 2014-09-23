@@ -179,6 +179,7 @@ function CheckCommencingChallenge()
 function AcceptChallenge()
 {
     session_start();
+    global $link;
     CancelExpiredChallenges();
     
     $initiatorID = "SELECT UserID FROM User WHERE Username = '{$_POST['username']}'";
@@ -202,7 +203,9 @@ function AcceptChallenge()
     $query = "INSERT INTO `Match`(`FirstPlayerID`,`SecondPlayerID`,`Turn`) VALUES($firstPlayer,$secondPlayer,-1)";
     ExecuteQuery($query);
     
-    $matchID = QuerySingleRow("SELECT MatchID FROM `Match` WHERE FirstPlayerID = $firstPlayer && SecondPlayerID = $secondPlayer && Turn = -1")["MatchID"];
+    $matchID = mysqli_insert_id($link);
+    
+//    $matchID = QuerySingleRow("SELECT MatchID FROM `Match` WHERE FirstPlayerID = $firstPlayer && SecondPlayerID = $secondPlayer && Turn = -1")["MatchID"];
     
     ExecuteQuery("UPDATE User SET CurrentMatchID = $matchID WHERE UserID = $firstPlayer OR UserID = $secondPlayer");
     
@@ -219,6 +222,16 @@ function AcceptChallenge()
 //    $_SESSION["gameState"] = GameState::SETUP;
     InitializeMatch($ret["InitiatorID"], $matchID);
 }
+
+function DeclineChallenge()
+{
+    session_start();
+    
+    $username = "(SELECT UserID FROM User WHERE Username = '{$_POST['username']}')";
+    
+    ExecuteQuery("UPDATE Challenge SET Action = -1 WHERE RecipientID = {$_SESSION['userID']} && InitiatorID = $username && Action = 0");
+}
+
 
 function InitializeMatch($opponentID, $matchID)
 {
@@ -281,7 +294,6 @@ function GetAllOnlinePlayers()
     
     $ret = SQLArrayToArray(ExecuteQuery($query . " WHERE Username = '{$_SESSION['username']}'"));
     $data["ownDetails"] = $ret[0];
-
 
     
 }

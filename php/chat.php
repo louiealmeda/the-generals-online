@@ -3,7 +3,7 @@
 //require_once("connectivity.php");
 
 $smileyLegend = [
-    "'^_^",
+    "^_^",
     "O.O",
     "(ninja)",
     "(uhoh)",
@@ -18,7 +18,31 @@ $smileyLegend = [
     "x_x",
     "B:",
     ":*",
-    ":)"
+    ":)",
+    "(cloud)",
+    ".\/.",
+    ":[]",
+    "#o.O",
+    ";p",
+    "(ouch)",
+    "(fire)",
+    "*.*",
+    "0o0",
+    "(hmp)",
+    "-_-",
+    "(huh)",
+    "'[]'",
+    "(nosebleed)",
+    "XD",
+    "(nosepick)",
+    "(hay)",
+    "(uhh)",
+    "(evil)",
+    "(hihi)",
+    "(shy)",
+    "(gossip)",
+    "X3",
+    "(yes)"
     ];
     
 function SendMessage()

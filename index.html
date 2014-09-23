@@ -24,7 +24,132 @@
     </head>
     <body>
         
-        
+        <div class="how-to-play-container">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a onclick="$(this).tab('show');" href="#objective" role="tab" data-toggle="tab">Objective</a></li>
+                <li><a onclick="$(this).tab('show');" href="#pieces" role="tab" data-toggle="tab">The Pieces</a></li>
+                <li><a onclick="$(this).tab('show');" href="#game-play" role="tab" data-toggle="tab">Moves and gameplay</a></li>
+                <li><a onclick="$(this).tab('show');" href="#challenging" role="tab" data-toggle="tab">Challenging</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content" style="height: 100%;">
+                <div class="tab-pane active" id="objective">
+                    <br>
+                    The objective of the game is to eliminate or capture the flag of the opponent, or to maneuver one's flag to the other end of the board.
+                </div>
+                <div class="tab-pane" id="pieces" style="position: relative; height: 100%;">
+                    <div style="width:100%; height: 80%; overflow-y: scroll;">
+                        <br>
+                        The player's set of pieces or soldiers with the corresponding ranks and functions consist of the following 21 pieces. A higher ranking piece will eliminate any lower ranking piece, with the exception of the spy, which eliminates all pieces except the private. The piece's rank or insignia are hidden from the opponent.
+                        <br>
+                        <br>
+                        <table class="manual" style="">
+                            <th>Symbol</th>
+                            <th>Name</th>
+                            <th>Function</th>
+                            <tr>
+                                <td class="piece" data-piece='o'></td>
+                                <td>Spy</td>
+                                <td>Eliminates any lower ranking officer except the private</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='n'></td>
+                                <td>Five-star General</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='m'></td>
+                                <td>Four-star General</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='l'></td>
+                                <td>Lieutenant General</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='k'></td>
+                                <td>Major General</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='j'></td>
+                                <td>Brigadier General</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='i'></td>
+                                <td>Colonel</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='h'></td>
+                                <td>Lt. Colonel</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='g'></td>
+                                <td>Major</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='f'></td>
+                                <td>Captain</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='e'></td>
+                                <td>1st Lieutenant</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='d'></td>
+                                <td>2nd Lieutenant</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='c'></td>
+                                <td>Sergeant</td>
+                                <td>Eliminates any lower ranking officer</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='b'></td>
+                                <td>Private</td>
+                                <td>Eliminates the flag and the Spy</td>
+                            </tr>
+                            <tr>
+                                <td class="piece" data-piece='a'></td>
+                                <td>Flag</td>
+                                <td>Eliminates the opposing flag as long as it takes the aggressive action against the enemy flag.</td>
+                            </tr>
+                        </table>
+                        <br>
+                        Note: If both soldiers are of equal rank, both are eliminated.
+                    </div>
+                </div>
+                <div class="tab-pane" id="game-play">
+                    <br>
+                    <img src="images/tutorial/set-up.png" style="float: right; width: 250px; 
+                                                                 -ms-transform: rotate(7deg);
+                                                                 -webkit-transform: rotate(7deg);
+                                                                 transform: rotate(7deg);">
+                    The game is played on a board with 9x8 plain squares. The pieces are placed in various locations in the first three rows of each player's home side. 
+                    Unlike chess or its variants, there is no predetermined layout for the pieces, allowing each player to place the pieces to his advantage. There is also no predetermined order of play. The players can decide who goes first; afterward, the players take their turns alternately.
+                    <br>
+                    
+                    <img src="images/tutorial/move.png" style="float: left; width: 200px;">
+                    <br>
+                    <br>
+                    All pieces have the same move: One space forward, backward, or sideways. Each player can move only one piece per turn.
+                </div>
+                <div class="tab-pane" id="challenging">
+                    <br>
+                    A challenge is signaled by placing one's piece on top of the opposing piece occupying one of the squares. The arbiter then examines the ranks of the opposing pieces and removes the lower-ranked piece off the board and returns it to the owner regardless of who initiated the challenge. This game is computer arbitrated, meaning the system will automatically evaluate who won the challenge.
+                </div>
+            </div>
+        </div>
         
         <div class="container main">
             <div class="bg-container"></div>
@@ -83,10 +208,31 @@
                 <div>Fill</div>
                 <div onclick="Logout();">Logout</div>
 -->
+                
                 <div class="row main">
                     <div class="col-md-12 header">
                         <div class="user-profile">
-                            <ul class="challenges"></ul>
+                            <div class="profile">
+                                <div class="summary" style="padding-right: 0px;">
+                                    <div class="selectable">
+                                        <strong class="name" style="padding: 0px;">loading</strong>
+                                        <div class="rank">loading</div>
+                                        <div class="experience"><div class="progress" style="width: 0%;"></div></div>
+                                        <ul class="details">
+                                            <li>Win: 0</li>
+                                            <li>Lose: 0</li>
+                                            <li>Streak: 0</li>
+                                        </ul>
+                                    </div>
+                                    <div class="img" style="padding-right: 0px; margin-right: 0px;  url(images/users/default.png);"></div>
+                                </div>
+                                
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div onclick="Logout();" class="btn small stone" style="text-shadow: none;">Logout</div>
+                            <div onclick="ShowHowToPlay();" class="btn small stone" style="text-shadow: none;">How to play</div>
+                            <div class="img"></div>
+<!--                            <ul class="challenges"></ul>-->
                         </div>
                     </div>
                     <div class=" col-md-4">
@@ -107,14 +253,16 @@
                     <div class="col-md-8 inset chatbox-container">
                         <div class = "scroller">
                             <ul class="chatbox">
-                                <li><div class="img" style="background-image: url(images/users/default.png)"></div><strong data-username ="Invictus" class="player"><span class = "name">Invictus</span></strong>quid<span class="emoticon-3"></span> nisi eu quorum ipsum</li>
-                                <li class="system-normal">adipisicing nisi dolore nam coniunctione</li>
+<!--                                <li><div class="img" style="background-image: url(images/users/default.png)"></div><strong data-username ="Invictus" class="player"><span class = "name">Invictus</span></strong>quid<span class="emoticon-3"></span> nisi eu quorum ipsum</li>-->
+                                <li class="system-normal">Welcome to the lobby! Here you can chat with the other players and challenge them to a match.</li>
+<!--
                                 <li class="system-warning">incididunt iudicem adipisicing varias sempiternum laboris ab</li>
                                 <li class="system-alert">mentitum nulla occaecat proident</li>
+-->
                             </ul>
                         </div>
                         <div class="fader"></div>
-                        <input type="text" onkeyup="TieChatInputBox(this)" class="input-box" placeholder="Type your message here" maxlength="255">
+                        <input tabIndex="-1" type="text" onkeyup="TieChatInputBox(this)" class="input-box" placeholder="Type your message here" maxlength="255">
                     </div>
                 </div>
             </div>
@@ -127,8 +275,8 @@
                 <div class = "row">
                     <div class="col-md-12 opponents-turn">
                         <ul class="menu-bar">
-                            <li class="btn small gray" onclick="OpenInGameMenu()">Menu</li>
-                            <li class="btn small gray" onclick="OpenHowToPlay()">How to play</li>
+                            <li class="btn small stone" onclick="OpenInGameMenu()">Menu</li>
+                            <li class="btn small stone" onclick="ShowHowToPlay();">How to play</li>
                         </ul>
  
                     </div>
@@ -205,7 +353,7 @@
                                     </ul>
                                 </div>
                                 <div class="fader"></div>
-                                <input type="text" onkeyup="TieChatInputBox(this,-1);" class="input-box" placeholder="Type your message here" maxlength="255">
+                                <input tabIndex="-1" type="text" onkeyup="TieChatInputBox(this,-1);" class="input-box" placeholder="Type your message here" maxlength="255">
                             </div>
                             
                         </div>
@@ -218,9 +366,8 @@
         </div>
         
         
-        <div class="player-popover unselectable">
+        <div class="player-popover user-profile unselectable">
             <div class="summary">
-                <!--                <img src="images/users/4.png" onerror="this.onerror=null;this.src='images/users/default.png';">-->
                 <div class="img"></div>
                 <div class="selectable">
                     <strong class="name">cillum despicationes</strong>
@@ -243,7 +390,7 @@
             <div class="glyphicon glyphicon-play"></div>
         </div>
 
-        <div id = "test-panel"></div>
+        <div id = "test-panel" style="display:none"></div>
         
         
         <div class="notification-window absolute-center">

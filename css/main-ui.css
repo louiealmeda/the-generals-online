@@ -350,12 +350,16 @@ input:focus{
 
 .lobby .header .user-profile{
     height: 100px;
-    border: 1px solid red;
+/*    border: 1px solid red;*/
 
     margin: 40px 0px 50px 350px;
 
 }
 
+.lobby .header .user-profile>*{
+    float: right;
+    margin-left: 5px;
+}
 
 .lobby .online-player-container{
     overflow-x: hidden;
@@ -677,46 +681,85 @@ input:focus{
     100% {opacity: 0}
 }
 
-.player-popover {
-    border-radius: 8px;
+.user-profile {
+    
     display: inline-block;
-    background-color: rgba(0,0,0,0.8);
-    background-color: rgba(41, 41, 44, 0.8);
+    
 /*    outline: 1px solid red;*/
 /*    padding: 5px;*/
     vertical-align: text-top;
     line-height: 1em;
     color: white;
-    border: 2px solid rgba(0,0,0,0.8);
-    border: 2px solid rgba(255,255,255,0.2);
-    box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
-    position: absolute;
     
 /*    margin-top: -250px;*/
-    margin-left: 18px;
+    
     
 /*    margin-top: -10px;*/
     
-    top: 100px;
-    left: 100px;
+    
     z-index: 100;
     transition: top 0.5s, left 0.5s, opacity 0.5s, width 0.3s;
-    opacity: 0;
-    visibility: hidden;
 }
 
-.player-popover .summary{
+.header>.user-profile{
+    margin-top: 80px !important;
+    display: block;
+    padding-right: 0px;
+    margin-right: 0px;
+/*    border: 1px solid red;*/
+    position: relative;
+    margin-bottom: 0px !important;
+    height: 100%;
+}
+
+.header>.user-profile>*{
+    float: right;
+}
+
+.user-profile .profile .summary .img{
+    float: right;
+    margin-left: 5px;
+}
+
+.user-profile .profile .summary .name{
+    text-align: right;
+    display: block;
+    width: 100%;
+}
+.user-profile .profile .summary .rank{
+    text-align: right;
+}
+
+
+.user-profile.player-popover{
+    border: 2px solid rgba(0,0,0,0.8);
+    border: 2px solid rgba(255,255,255,0.2);
+
+    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(41, 41, 44, 0.8);
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+    margin-left: 18px;
+    top: 100px;
+    left: 100px;
+    position: absolute;
+    border-radius: 8px;
+    opacity: 0;
+    visibility: hidden;
+    
+}
+
+.user-profile .summary{
 /*    display: table;*/
     padding: 5px;
 }
 
-.player-popover .summary>*{
+.user-profile .summary>*{
 /*    display: table-cell;*/
 /*    vertical-align: text-top;*/
     display: inline-block;
 }
 
-.player-popover .summary>.img{
+.user-profile .summary>.img{
     float: left;
     width: 50px;
     height: 50px;
@@ -727,14 +770,15 @@ input:focus{
     border-radius: 5px;
     border: none;
 }
-.player-popover .summary strong{
+.user-profile .summary strong{
     font-size: 1.1em;
     padding-right: 50px;
     position: relative;
     display: block;
 }
 
-.player-popover .summary strong:after{
+/*
+.user-profile .summary strong:after{
     content: '*';
     color: transparent;
     width: 30px;
@@ -744,18 +788,19 @@ input:focus{
     top: -10px;
     background-color: green;
 }
+*/
 
-.player-popover .summary .rank{
+.user-profile .summary .rank{
     font-size: 0.9em;
 }
 
-.player-popover .summary .experience{
+.user-profile .summary .experience{
     height: 5px;
     background-color: rgba(100,150,100,0.5);
     margin: 2px 0px;
 }
 
-.player-popover .summary .experience .progress{
+.user-profile .summary .experience .progress{
     border-radius: 0px;
     height: 100%;
     display: inline-block;
@@ -763,18 +808,18 @@ input:focus{
     background-color: #5F5;
 }
 
-.player-popover .details{
+.user-profile .details{
     font-size: 0.9em;
 }
 
-.player-popover .actions{
+.user-profile .actions{
     clear: left;
     background-color: rgba(0,0,0,0.5);
     border-radius: 0px 0px 5px 5px;
     padding: 2px 5px 4px 5px;
 }
 
-.player-popover .actions>li{
+.user-profile .actions>li{
     margin: 0px 2px 0px 0px;
     padding: 2px;
     cursor: pointer;
@@ -783,15 +828,15 @@ input:focus{
     border-radius: 2px;
 }
 
-.player-popover .actions>li:not(.relative-score):hover{
+.user-profile .actions>li:not(.relative-score):hover{
     color: #111;
     background-color: #999;
 }
-.player-popover .actions>li.relative-score{
+.user-profile .actions>li.relative-score{
     float: right;
 }
 
-.player-popover .glyphicon-play{
+.user-profile .glyphicon-play{
     position: absolute;
     top: 50%;
 /*    top: 100%;*/
@@ -806,14 +851,14 @@ input:focus{
 /*    outline: 1px solid red;*/
 }
 
-.player-popover ul{
+.user-profile ul{
     list-style: none;
     padding: 0px;
     padding: 0px;
     margin: 0px;
 }
 
-.player-popover ul li{
+.user-profile ul li{
     display: inline-block;
 }
 
@@ -897,6 +942,23 @@ input:focus{
 .btn.gray{ background-color: rgb(150,150,150); color: black;}
 .btn.gray:hover{ background-color: rgb(200,200,200); }
 
+.btn.stone{ 
+    text-shadow: 0px 1px 0px white, 0px -1px 0px black !important;
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b5bdc8), color-stop(36%,#828c95), color-stop(100%,#28343b)), url(../images/texture.png); 
+    background-position: center;
+    background-blend-mode: multiply;
+    border-top: 1px solid rgba(255,255,255,0.5);
+    border-bottom: 1px solid rgba(0,0,0,1);
+    color: #AAA !important;
+/*    font-weight: bold;*/
+    
+/*    background-color: red;*/
+}
+
+.btn.stone:hover{
+    color: white !important;
+}
+
 
 [class*="emoticon-"]{
     display: inline-block;
@@ -929,9 +991,19 @@ input:focus{
 .emoticon-13{background-position: 33.4% 0%}
 .emoticon-14{background-position: 35.9% 0%}
 .emoticon-15{background-position: 38.4% 0%}
-.emoticon-16{background-position: 40% 0%}
-.emoticon-17{background-position: 42.5% 0%}
-.emoticon-18{background-position: 45% 0%}
-.emoticon-19{background-position: 47.5% 0%}
-.emoticon-20{background-position: 50% 0%}
-.emoticon-21{background-position: 52.5% 0%}
+.emoticon-16{background-position: 41% 0%}
+.emoticon-17{background-position: 43.5% 0%}
+.emoticon-18{background-position: 46.2% 0%}
+.emoticon-19{background-position: 48.5% 0%}
+.emoticon-20{background-position: 51% 0%}
+.emoticon-21{background-position: 54% 0%}
+.emoticon-22{background-position: 56.5% 0%}
+.emoticon-23{background-position: 59% 0%}
+.emoticon-24{background-position: 61.5% 0%}
+.emoticon-25{background-position: 64% 0%}
+.emoticon-26{background-position: 67% 0%}
+.emoticon-27{background-position: 69.3% 0%}
+.emoticon-28{background-position: 71.8% 0%}
+.emoticon-29{background-position: 74.6% 0%}
+.emoticon-30{background-position: 77% 0%}
+

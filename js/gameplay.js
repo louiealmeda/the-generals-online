@@ -354,8 +354,8 @@ function GenerateBoard(isEnemyShown)
 //    alert(isEnemyShown);
     
     
-    if(board.content.indexOf("+") != -1)
-        alert(board.content);
+//    if(board.content.indexOf("+") != -1)
+//        alert(board.content);
     
     //Resize Board
     tmpBoard = board.content;
@@ -388,7 +388,7 @@ function GenerateBoard(isEnemyShown)
                 
                 if(exclude[index] == "+")
                 {
-                    alert("Flag Shown");
+                    //alert("Flag Shown");
                     tmp = "*";
                     owned = "enemy";
                     currentPiece = "*";
@@ -541,7 +541,7 @@ function GameStateChanged(data)
             Notification.Show(title, messages[data.won][data.outcome] + " You "+gain+" 131 points! <br><br><div class='btn gray' onclick='Notification.Close();'>View replay</div>\n<div class='btn blue' onclick='BackToLobby(); Notification.Close()'>Back to Lobby</div>", color);
             
             board.content = data.board;
-//            alert(data.side);
+            //alert(data.side);
             GenerateBoard(data.side);
             
             break;
@@ -987,7 +987,7 @@ function RandomizeSetup()
 function Resign()
 {
     $.post("php/arbiter.php",{method: "Resign" }, function(data){
-        alert(data);
+//        alert(data);
         Notification.Close();
     });
 }
@@ -999,7 +999,7 @@ function ConfirmResign()
     content += "<br><br><div class='btn red' onclick='Resign();'>Yes</div>\n";
     content += "<div class='btn green' onclick='Notification.Close();'>Cancel</div>\n";
     
-    Notification.Show("Are you sure you want to resign?",content,"red", false, 350);
+    Notification.Show("Are you sure you want to resign?",content,"red");
 }
 
 function OpenInGameMenu()
@@ -1009,10 +1009,5 @@ function OpenInGameMenu()
     content += "<div class='btn red' onclick='ConfirmResign();'>Resign</div>\n";
     content += "<div class='btn blue' onclick='Notification.Close();'>Close</div>\n";
     
-    Notification.Show("Menu",content,"blue");
-}
-
-function OpenHowToPlay()
-{
-    Notification.Show("How To Play","hic quis offendit iudicem quem","blue");   
+    Notification.Show("Menu",content,"blue", false, 300);
 }

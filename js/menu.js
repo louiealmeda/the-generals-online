@@ -18,10 +18,16 @@ var playerPopover = {
 var playerDetails = {};
 var ownDetails = {};
 
+var howToPlayContent = "";
+
 $currentScreen = ".container.main";
 
 $(document).ready(function(){
     
+//    $("*").attr("tabindex", "-1");
+    howToPlayContent = $(".how-to-play-container").html();
+    $(".how-to-play-container").html("");
+//    ShowHowToPlay();
     
     if(window.location.hash) 
     {
@@ -29,6 +35,10 @@ $(document).ready(function(){
         {
             case "#destroy":
                 Logout();
+                break;
+            
+            case "#debug":
+                $("#test-panel").css("display","block")
                 break;
         }
     }
@@ -135,7 +145,11 @@ var lastScreenOffset = 0;
 function MoveScreen(offset)
 {
     if(typeof offset == "string")
+    {
+//        $(offset + " input").attr("disabled", "false");
+//        $(offset + "~* input").attr("disabled", "true");
         offset = -100 * $(offset).index();
+    }
     
     if(lastScreenOffset == offset)
         return;
@@ -145,6 +159,7 @@ function MoveScreen(offset)
 //    alert($("body>.container").css("top") +" | "+ offset+"%");
     
     $("body>.container").animate({"top": offset+ "%"},1000);
+    
 }
 
 //function MoveScreen(from, to)
@@ -290,7 +305,7 @@ function BackToLobby()
 {
     $.post("php/arbiter.php",{method:"BackToLobby"},function(data){
 //        alert(data);
-        
+        ownDetails = {};
     });
 }
 
@@ -304,21 +319,37 @@ function UpdateLobby(data)
 
 function UpdateChallenges(challenges)
 {
+    if(challenges.length == 0 || Notification.IsOpen)
+        return;
     
-    var tmp = "";
+    var btns = "<br> <div onclick = 'DeclineChallenge(\""+challenges[0]+"\");' class = 'btn gray'>Decline</div> ";
+    btns += "<div onclick = 'AcceptChallenge(\""+challenges[0]+"\");' class = 'btn blue'>Accept</div>";
+    
+    Notification.Show("New challenge!", challenges[0] + " wants to challenge you into a match. Do you want to accept the challenge?" + btns, "blue");
+    
 //    alert();
-    challenges.forEach(function(e,i){
-        tmp += "<li onclick = 'AcceptChallenge(\""+e+"\");'>"+e+"</li>";
-    });
-    
-    $(".lobby .header .user-profile .challenges").html(tmp);
+//    challenges.forEach(function(e,i){
+//        tmp += "<li onclick = 'AcceptChallenge(\""+e+"\");'>"+e+"</li>";
+//    });
+//    
+//    $(".lobby .header .user-profile .challenges").html(tmp);
 }
 
 function AcceptChallenge(username)
 {
 //    alert(username);
     $.post("php/connectivity.php",{method:"AcceptChallenge", username: username },function(data){
-        alert(data);
+//        alert(data);
+        Notification.Close();
+    });
+}
+
+function DeclineChallenge(username)
+{
+    //    alert(username);
+    $.post("php/connectivity.php",{method:"DeclineChallenge", username: username },function(data){
+        //        alert(data);
+        Notification.Close();
     });
 }
 
@@ -332,7 +363,9 @@ function DoActionToPlayer(action)
     {
         case PlayerActions.CHALLENGE:
             $.post("php/connectivity.php",{method:"ChallengePlayer", toUsername: currentPlayer },function(data){
-                alert(data);
+//                alert(data);
+                if(data == "Request sent")
+                    Notification.Show("Request sent", "You've challenged " + currentPlayer + ". <br><div class = 'btn gray' onclick='Notification.Close()'>Ok</div>", "green");
             });
             break;
     }
@@ -431,7 +464,7 @@ function Login()
 {
     var username = $(".login-form #username").val();
     var password = $(".login-form #password").val();
-    alert(username + "|" + password);
+//    alert(username + "|" + password);
     if(password.length < 8)
         $(".login-form #password").parent().removeClass().addClass("status-warning");
     
@@ -447,7 +480,7 @@ function Login()
 
         
     $.post("php/login-manager.php",{method:"Login", data:data},function(retData){
-        alert("Received: '" + retData + "'");
+        //alert("Received: '" + retData + "'");
         $(".login-form #password").parent().removeClass();
         $(".login-form #username").parent().removeClass();
         
@@ -459,7 +492,7 @@ function Login()
         }
         else
         {   
-            alert("logged");
+            //alert("logged");
             GotoMainMenu(".login-form",retData);
         }
     });
@@ -468,7 +501,9 @@ function Login()
 function Logout()
 {
     $.post("php/login-manager.php",{method:"Logout"},function(data){
-        
+        MoveScreen(0);
+//        ShowMenu(".login-select");
+        HideMenu(".main-menu");
     });
 }
 
@@ -542,6 +577,12 @@ function CheckAvailability(info,sender)
     });
 }
 
+function ShowHowToPlay()
+{
+    
+    Notification.Show("How to play <div onclick = 'Notification.Close();' class = 'btn red small pull-right'>Done</div>", howToPlayContent, "blue", false, 600, 500);
+}
+
 function ToggleSwitch(sender)
 {
     if($(sender).hasClass("disabled"))
@@ -554,10 +595,11 @@ function ToggleSwitch(sender)
     
 }
 
-function ShowNotification(title, body, addedClass,fixSize,iwidth)
+function ShowNotification(title, body, addedClass,fixSize, iwidth, iheight)
 {
     fixSize = fixSize || false;
     iwidth = iwidth || 200;
+    
     var time = 0;
     if(Notification.IsOpen)
     {
@@ -578,18 +620,25 @@ function ShowNotification(title, body, addedClass,fixSize,iwidth)
         Notification.Object.css("width",iwidth + "px");
 
         var height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
+        
+        if(iheight != null)
+            height = iheight;
+        
+        
         var width = Notification.Object.width();
 
         while( height>width && !fixSize )
         {
 //            var dif = (height - width) * 3;
             var dif = width += 10;
-            
             Notification.Object.css("width", "+=" +dif+ "px");
             height = Notification.Object.children(".title").outerHeight() + Notification.Object.children(".body").outerHeight();
             width = Notification.Object.width();
+//            alert(width + ", " + height);
         }
 
+        Notification.Object.children(".body").css({"height":"100%"});
+        
         Notification.Object.css({
             "transition":"0.2s height 0s, 0.2s width 0.2s",
             "width":"0px",

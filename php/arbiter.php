@@ -78,7 +78,15 @@ function BackToLobby()
     session_start();
     print_r($_SESSION);
     
-    $ret = ExecuteQuery("UPDATE User SET currentMatchID = 0 WHERE UserID = {$_SESSION['userID']}");
+    
+    $winnerID = QuerySingleRow("SELECT WinnerID FROM `Match` WHERE MatchID = {$_SESSION["matchID"]}")["WinnerID"];
+    
+    $field = "Win";
+    
+    if($winnerID != $_SESSION['userID'])
+        $field = "Lose";
+    
+    $ret = ExecuteQuery("UPDATE User SET $field = $field + 1,  currentMatchID = 0 WHERE UserID = {$_SESSION['userID']}");
     
     $_SESSION["siteState"] = SiteState::LOBBY;
     $_SESSION["gameState"] = -1;
@@ -147,6 +155,7 @@ function GetBoard()
         $data["side"] = $_SESSION["side"];
         $data["board"] = $board;
     }
+    
 }
 
 function SendMove()
@@ -442,9 +451,10 @@ function SendMove()
         $_SESSION["gameState"] = GameState::WAITING;
     
     
+    CheckOponentsUpdate();
+    
     GetBoard();
     
-    CheckOponentsUpdate();
     
     echo json_encode($data);
 }
@@ -479,6 +489,7 @@ function CheckGameAutoStarting($timeRemaining)
     
     $pieces = $_SESSION['side'] == PlayerSide::FIRST_PLAYER ? $firstPlayerPieces : $secondPlayerPieces;
     $start = $_SESSION['side'] == PlayerSide::FIRST_PLAYER ? 0 : 5;
+    $limit = $_SESSION['side'] == PlayerSide::FIRST_PLAYER ? 5 : -5;
     $counter = $piecesCount;
     
 //    return;
@@ -525,7 +536,7 @@ function CheckGameAutoStarting($timeRemaining)
         {
             for($j = 0; $j < $counter[$i]; $j++)
             {
-                $pos = rand(0, count($freeBlocks) - 4);
+                $pos = rand(0, count($freeBlocks));
                 
                 $board[$freeBlocks[$pos]] = $pieces[$i];
                 
@@ -631,6 +642,7 @@ function CheckOponentsUpdate()
                 }
             $_SESSION["outcome"] = $ret["Outcome"];
             $_SESSION["gameState"] = GameState::GAME_OVER;
+            GetBoard();
             break;
 
             case -2:

@@ -80,7 +80,20 @@ function GameEventHandler(data)
         case SiteStates.LOBBY:
             AppendMessage(data.chat);
             if(data.ownDetails != null)
+            {   
                 ownDetails = data.ownDetails;
+//                {"Username":"Guest_0002E","Win":"0","Lose":"0","Rank":"Private","CurrentMatchID":"0","Point":"0","Streak":"0","Experience":"0","ExperienceRequired":"300"}
+//                alert(JSON.stringify(ownDetails));
+                $(".user-profile .profile .summary .name").html(ownDetails.Username);
+                $(".user-profile .profile .summary .img").css({"background-image": "url(images/users/"+ownDetails.Username+".png), url(images/users/default.png)"});
+                $(".user-profile .profile .summary .rank").html(ownDetails.Rank);
+                $(".user-profile .profile .summary .details").html("Win: " + ownDetails.Win + " Lose: " + ownDetails.Lose + " Streak: " + ownDetails.Streak);
+                $(".user-profile .profile .summary .progress").css({"width": ownDetails.Experience / ownDetails.ExperienceRequired * 100 + "%"});
+//                .user-profile .profile .summary .rank
+//                .user-profile .profile .summary .progress
+//                .user-profile .profile .summary .details
+//                .user-profile .profile .summary .img
+            }
             
             UpdateLobby(data);
             break;
