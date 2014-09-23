@@ -38,7 +38,7 @@ $(document).ready(function(){
                 break;
             
             case "#debug":
-                $("#test-panel").css("display","block")
+                $("#test-panel").css("display","block");
                 break;
         }
     }
@@ -287,6 +287,8 @@ function UpdateOnlinePlayers(players)
         if(e.CurrentMatchID == 0)
             available = "available";
 
+        
+        
         tmp += "<li class = 'player "+available+"' data-username='"+e.Username+"' >";
         tmp += '<div class = "img" style = "background-image: url(images/users/'+e.Username+'.png) , url(images/users/default.png)"></div>'; //onerror='this.onerror=null;this.src=\"images/users/default.png\";' 
         tmp += "<a class='name'>" + e.Username + "</a>";
@@ -386,6 +388,9 @@ function MovePlayerPopoverToTarget(target)
     
     if(target != null || playerPopover.hovered)
     {   
+        
+//        alert($(target).wrap("<p>").parent().html());
+//        alert(target.attr("data-username"));
 //        playerPopover.object.css({
 //            "top":playerPopover.target.offset().top - playerPopover.object.height() + "px",
 //            "margin-left": -playerPopover.object.width() / 2 + "px",
@@ -396,6 +401,10 @@ function MovePlayerPopoverToTarget(target)
 //            playerPopover.object.css({"margin-left": "-=" + playerPopover.object.offset().left + "px"});
 //        
 
+        
+        if(target.attr("data-username") == ownDetails.Username)
+            return;
+        
 //        alert(target.children("name"));
         playerPopover.object.css({
             "top": target.offset().top + target.height() /2 + "px",
@@ -405,7 +414,12 @@ function MovePlayerPopoverToTarget(target)
             "visibility": "visible"
         });
         
+//        alert(target.attr("data-username"));
+        
         var player = playerDetails[target.attr("data-username")];
+        
+        
+//        alert(JSON.stringify(player));
 //        alert(playerPopover.object.find(".summary>.img").length);
         playerPopover.object.find(".summary>.img").css({"background-image":"url(images/users/" + player.Username + ".png) , url(images/users/default.png)"});
         playerPopover.object.find(".name").html(player.Username);

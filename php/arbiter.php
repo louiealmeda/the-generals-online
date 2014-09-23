@@ -81,12 +81,19 @@ function BackToLobby()
     
     $winnerID = QuerySingleRow("SELECT WinnerID FROM `Match` WHERE MatchID = {$_SESSION["matchID"]}")["WinnerID"];
     
+    $streak = "Streak + 1";
+    
     $field = "Win";
-    
+    $exp = 98;
     if($winnerID != $_SESSION['userID'])
+    {   
         $field = "Lose";
+        $streak = "0";
+        $exp = 0;
+    }
     
-    $ret = ExecuteQuery("UPDATE User SET $field = $field + 1,  currentMatchID = 0 WHERE UserID = {$_SESSION['userID']}");
+    
+    $ret = ExecuteQuery("UPDATE User SET Experience = Experience + $exp,  Streak = $streak, $field = $field + 1,  currentMatchID = 0 WHERE UserID = {$_SESSION['userID']}");
     
     $_SESSION["siteState"] = SiteState::LOBBY;
     $_SESSION["gameState"] = -1;
